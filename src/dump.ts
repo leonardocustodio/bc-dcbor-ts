@@ -98,7 +98,7 @@ export function hexAnnotated(cbor: Cbor, tagsStore?: TagsStore): string {
     // eslint-disable-next-line @typescript-eslint/no-require-imports, no-undef, @typescript-eslint/no-unsafe-assignment
     const { getGlobalTagsStore } = require('./tags-store');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    tagsStore = getGlobalTagsStore();
+    tagsStore = getGlobalTagsStore() as TagsStore;
   }
   return hexOpt(cbor, { annotate: true, tagsStore });
 }

@@ -113,7 +113,7 @@ export const Cbor = {
   tryFromData(data: Uint8Array): Cbor {
     // eslint-disable-next-line @typescript-eslint/no-require-imports, no-undef, @typescript-eslint/no-unsafe-assignment
     const { decodeCbor } = require('./decode');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     return decodeCbor(data) as Cbor;
   },
 
@@ -261,9 +261,11 @@ export function cbor(value: CborEncodable): Cbor {
   } else if (value instanceof Set) {
     return { isCbor: true, type: MajorType.Array, value: Array.from(value).map(v => cbor(v as CborEncodable)) };
   } else if (typeof value === 'object' && value !== null && 'taggedCbor' in value && typeof value.taggedCbor === 'function') {
-    return value.taggedCbor();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    return value.taggedCbor() as Cbor;
   } else if (typeof value === 'object' && value !== null && 'toCbor' in value && typeof value.toCbor === 'function') {
-    return value.toCbor();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    return value.toCbor() as Cbor;
   } else if (typeof value === 'object' && value !== null && 'tag' in value && 'value' in value) {
     // Handle plain tagged value format: { tag: number, value: unknown }
     const keys = Object.keys(value);
