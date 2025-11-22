@@ -111,9 +111,10 @@ export const Cbor = {
    * @throws Error if the data is not valid CBOR or violates dCBOR encoding rules
    */
   tryFromData(data: Uint8Array): Cbor {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, no-undef
+    // eslint-disable-next-line @typescript-eslint/no-require-imports, no-undef, @typescript-eslint/no-unsafe-assignment
     const { decodeCbor } = require('./decode');
-    return decodeCbor(data);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+    return decodeCbor(data) as Cbor;
   },
 
   /**
@@ -375,7 +376,6 @@ export function taggedCbor(tag: unknown, value: CborEncodable): Cbor {
  * These provide utilities for creating, checking, and extracting CBOR types.
  * Corresponds to Rust's conveniences.rs impl blocks.
  */
-// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace CborConvenience {
   // Byte String conveniences
 

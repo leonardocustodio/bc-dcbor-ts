@@ -223,14 +223,14 @@ export class CborMap {
     return `{${this.entries.map(CborMap.entryDiagnostic).join(', ')}}`;
   }
 
-  private static entryDebug(entry: MapEntry): string {
+  private static entryDebug(this: void, entry: MapEntry): string {
     // Format with full type information for debug output
     const keyDebug = CborMap.formatDebug(entry.key);
     const valueDebug = CborMap.formatDebug(entry.value);
     return `0x${bytesToHex(encodeCbor(entry.key))}: (${keyDebug}, ${valueDebug})`;
   }
 
-  private static formatDebug(cbor: Cbor): string {
+  private static formatDebug(this: void, cbor: Cbor): string {
     switch (cbor.type) {
       case MajorType.Unsigned:
         return `unsigned(${cbor.value})`;
@@ -275,7 +275,7 @@ export class CborMap {
     }
   }
 
-  private static entryDiagnostic(entry: MapEntry): string {
+  private static entryDiagnostic(this: void, entry: MapEntry): string {
     return `${diagnostic(entry.key)}: ${diagnostic(entry.value)}`;
   }
 

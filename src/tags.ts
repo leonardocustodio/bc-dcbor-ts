@@ -278,6 +278,7 @@ import type { TagsStore } from './tags-store';
 import { getGlobalTagsStore } from './tags-store';
 import { CborDate } from './date';
 import type { Cbor } from './cbor';
+import { diagnostic } from './diag';
 
 // Tag constants matching Rust
 export const TAG_DATE = 1;
@@ -300,7 +301,7 @@ export function registerTagsIn(tagsStore: TagsStore): void {
       try {
         return CborDate.fromUntaggedCbor(untaggedCbor).toString();
       } catch {
-        return String(untaggedCbor);
+        return diagnostic(untaggedCbor);
       }
     }
   );

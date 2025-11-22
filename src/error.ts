@@ -7,6 +7,7 @@
  */
 
 import type { Tag } from './tag';
+import { tagToString } from './tag';
 
 /**
  * A comprehensive set of errors that can occur during CBOR encoding and
@@ -174,7 +175,7 @@ export function errorToString(error: Error): string {
     case 'WrongType':
       return 'the decoded CBOR value was not the expected type';
     case 'WrongTag':
-      return `expected CBOR tag ${error.expected}, but got ${error.actual}`;
+      return `expected CBOR tag ${tagToString(error.expected)}, but got ${tagToString(error.actual)}`;
     case 'InvalidUtf8':
       return `invalid UTF‑8 string: ${error.message}`;
     case 'InvalidDate':

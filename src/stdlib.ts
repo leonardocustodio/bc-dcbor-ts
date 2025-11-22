@@ -15,18 +15,17 @@
  * Check if running in Node.js environment.
  */
 export function isNode(): boolean {
+  // eslint-disable-next-line no-restricted-globals
   return typeof process !== 'undefined' &&
-         // eslint-disable-next-line no-undef
-         process.versions != null &&
-         // eslint-disable-next-line no-undef
-         process.versions.node != null;
+         // eslint-disable-next-line no-undef, no-restricted-globals
+         process.versions?.node != null;
 }
 
 /**
  * Check if running in browser environment.
  */
 export function isBrowser(): boolean {
-  // eslint-disable-next-line no-undef
+  // eslint-disable-next-line no-undef, no-restricted-globals
   return typeof window !== 'undefined' && typeof window.document !== 'undefined';
 }
 
