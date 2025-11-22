@@ -15,7 +15,7 @@
  */
 
 // Core types
-export { Cbor, MajorType } from './cbor';
+export { Cbor, MajorType, CborConvenience } from './cbor';
 export type { Simple } from './simple';
 export type {
   CborUnsignedType,
@@ -43,6 +43,9 @@ export type { CBORTagged, CBORTaggedEncodable, CBORTaggedDecodable, CBORTaggedCo
 export { CborMap } from './map';
 export { CborSet } from './set';
 
+// ByteString
+export { ByteString } from './byte-string';
+
 // Date
 export { CborDate } from './date';
 
@@ -68,6 +71,7 @@ export { Ok, Err, errorMsg, errorToString, throwError } from './error';
 export { bytesToHex, hexToBytes } from './dump';
 export { isFloat } from './simple';
 export { numberToBinary, binaryToNumber } from './float';
+export { sortArrayByCborEncoding } from './array';
 
 // Conveniences
 export { isBoolean, asNumber, asText, isArray, isMap, asBytes, isTagged } from './conveniences';

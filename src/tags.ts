@@ -274,9 +274,10 @@ export function isStandardTag(value: number | bigint): boolean {
 // Matches Rust's register_tags() functionality
 // ============================================================================
 
-import { TagsStore, getGlobalTagsStore } from './tags-store';
+import type { TagsStore } from './tags-store';
+import { getGlobalTagsStore } from './tags-store';
 import { CborDate } from './date';
-import { Cbor } from './cbor';
+import type { Cbor } from './cbor';
 
 // Tag constants matching Rust
 export const TAG_DATE = 1;
@@ -345,11 +346,11 @@ export function registerTags(): void {
  * console.log(tags[2].value); // 999
  * ```
  */
-export function tagsForValues(values: Array<number | bigint>): Tag[] {
+export function tagsForValues(values: (number | bigint)[]): Tag[] {
   const globalStore = getGlobalTagsStore();
   return values.map(value => {
     const tag = globalStore.tagForValue(value);
-    if (tag) {
+    if (tag !== undefined) {
       return tag;
     }
     // Create basic tag with just the value
