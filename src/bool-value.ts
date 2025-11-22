@@ -4,8 +4,6 @@
  * dCBOR supports boolean values through major type 7 (simple values),
  * where `false` is encoded as 0xf4 and `true` as 0xf5.
  *
- * This file exists for 1:1 correspondence with Rust's bool_value.rs.
- *
  * @module bool-value
  */
 

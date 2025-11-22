@@ -8,8 +8,6 @@
  * The interface is automatically implemented for any type that implements both
  * `CBORTaggedEncodable` and `CBORTaggedDecodable`.
  *
- * This file exists for 1:1 correspondence with Rust's cbor_tagged_codable.rs.
- *
  * @module cbor-tagged-codable
  */
 

@@ -2,7 +2,6 @@
  * String utilities for dCBOR.
  *
  * In TypeScript, string encoding/decoding is handled in encode.ts and decode.ts.
- * This file exists for 1:1 correspondence with Rust's string.rs.
  *
  * @module string
  */

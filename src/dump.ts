@@ -5,8 +5,6 @@
  * Optionally annotates the output, breaking it up into semantically meaningful lines,
  * formatting dates, and adding names of known tags.
  *
- * This file exists for 1:1 correspondence with Rust's dump.rs.
- *
  * @module dump
  */
 
@@ -203,8 +201,12 @@ function dumpItems(
     case MajorType.Text: {
       const utf8Data = new TextEncoder().encode(cbor.value);
       const header = encodeVarInt(utf8Data.length, MajorType.Text);
+      const firstByte = header[0];
+      if (firstByte === undefined) {
+        throw new Error('Invalid varint encoding');
+      }
       const headerData = [
-        new Uint8Array([header[0]]),
+        new Uint8Array([firstByte]),
         header.slice(1)
       ];
 
@@ -224,8 +226,12 @@ function dumpItems(
 
     case MajorType.Array: {
       const header = encodeVarInt(cbor.value.length, MajorType.Array);
+      const firstByte = header[0];
+      if (firstByte === undefined) {
+        throw new Error('Invalid varint encoding');
+      }
       const headerData = [
-        new Uint8Array([header[0]]),
+        new Uint8Array([firstByte]),
         header.slice(1)
       ];
 
@@ -243,8 +249,12 @@ function dumpItems(
 
     case MajorType.Map: {
       const header = encodeVarInt(cbor.value.size, MajorType.Map);
+      const firstByte = header[0];
+      if (firstByte === undefined) {
+        throw new Error('Invalid varint encoding');
+      }
       const headerData = [
-        new Uint8Array([header[0]]),
+        new Uint8Array([firstByte]),
         header.slice(1)
       ];
 
@@ -270,8 +280,12 @@ function dumpItems(
         typeof tagValue === 'bigint' ? Number(tagValue) : tagValue,
         MajorType.Tagged
       );
+      const firstByte = header[0];
+      if (firstByte === undefined) {
+        throw new Error('Invalid varint encoding');
+      }
       const headerData = [
-        new Uint8Array([header[0]]),
+        new Uint8Array([firstByte]),
         header.slice(1)
       ];
 

@@ -8,8 +8,6 @@
  * data. This interface allows TypeScript types to verify that incoming CBOR data has the
  * expected tag(s) and to decode the data appropriately.
  *
- * This file exists for 1:1 correspondence with Rust's cbor_tagged_decodable.rs.
- *
  * @module cbor-tagged-decodable
  */
 

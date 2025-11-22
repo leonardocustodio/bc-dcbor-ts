@@ -19,8 +19,6 @@
  * identical byte representations, which is crucial for applications that rely
  * on consistent hashing, digital signatures, or other cryptographic operations.
  *
- * This file exists for 1:1 correspondence with Rust's map.rs.
- *
  * @module map
  */
 

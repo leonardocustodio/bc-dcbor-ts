@@ -1,8 +1,6 @@
 /**
  * Array conversion utilities for dCBOR.
  *
- * This file exists for 1:1 correspondence with Rust's array.rs.
- *
  * @module array
  */
 

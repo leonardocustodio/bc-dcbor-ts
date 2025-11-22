@@ -1,8 +1,6 @@
 /**
  * Error types for CBOR encoding and decoding.
  *
- * This file exists for 1:1 correspondence with Rust's error.rs.
- *
  * @module error
  */
 

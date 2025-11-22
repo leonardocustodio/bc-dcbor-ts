@@ -12,8 +12,6 @@
  * (1970-01-01T00:00:00Z). The numeric value can be a positive or negative
  * integer, or a floating-point value for dates with fractional seconds.
  *
- * This file exists for 1:1 correspondence with Rust's date.rs.
- *
  * @module date
  */
 
@@ -498,7 +496,11 @@ export class CborDate implements CBORTagged, CBORTaggedEncodable, CBORTaggedDeco
 
     if (!hasTime) {
       // Midnight (with possible subsecond precision) - show only date
-      return dt.toISOString().split('T')[0];
+      const datePart = dt.toISOString().split('T')[0];
+      if (datePart === undefined) {
+        throw new Error('Invalid ISO string format');
+      }
+      return datePart;
     } else {
       // Show full ISO datetime without milliseconds (matches Rust's SecondsFormat::Secs)
       const iso = dt.toISOString();

@@ -11,8 +11,6 @@
  * - They must use definite-length encoding
  * - Their length must be encoded in the shortest possible form
  *
- * This file exists for 1:1 correspondence with Rust's byte_string.rs.
- *
  * @module byte-string
  */
 

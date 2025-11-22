@@ -8,8 +8,6 @@
  * Provides exact conversions between numeric types (f16/f32/f64/integers).
  * Returns undefined if the conversion cannot be represented exactly.
  *
- * This file exists for 1:1 correspondence with Rust's exact.rs.
- *
  * @module exact
  */
 

@@ -180,7 +180,7 @@ export const Cbor = {
    * @returns A string with type annotations
    */
   toDebugString(cbor: Cbor): string {
-    // Debug string is the same as diagnostic for now
+    // TODO: Debug string is the same as diagnostic for now
   return diagnosticOpt(cbor, { flat: false });
   },
 
@@ -236,7 +236,7 @@ export function cbor(value: CborEncodable): Cbor {
   }
 
   if (isCborNumber(value)) {
-  if (typeof value === 'number' && isNaN(value)) {
+  if (typeof value === 'number' && Number.isNaN(value)) {
     return { isCbor: true, type: MajorType.Simple, value: { type: 'Float', value: NaN } };
   } else if (typeof value === 'number' && hasFractionalPart(value)) {
     return { isCbor: true, type: MajorType.Simple, value: { type: 'Float', value: value } };

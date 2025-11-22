@@ -268,6 +268,9 @@ function walkArray<State>(
 
   for (let index = 0; index < cbor.value.length; index++) {
     const item = cbor.value[index];
+    if (item === undefined) {
+      throw new Error(`Array element at index ${index} is undefined`);
+    }
     currentState = walkInternal(
       item,
       level + 1,
