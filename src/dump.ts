@@ -14,6 +14,7 @@ import { type Cbor, MajorType, cborData } from './cbor';
 import { encodeVarInt } from './varint';
 import { flanked, sanitized } from './string-util';
 import type { TagsStore } from './tags-store';
+import { getGlobalTagsStore } from './tags-store';
 import { createTag } from './tag';
 
 /**
@@ -95,10 +96,7 @@ export function hexOpt(cbor: Cbor, opts: HexFormatOpts = {}): string {
 export function hexAnnotated(cbor: Cbor, tagsStore?: TagsStore): string {
   // Use global tags store if not provided
   if (tagsStore === undefined) {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, no-undef, @typescript-eslint/no-unsafe-assignment
-    const { getGlobalTagsStore } = require('./tags-store');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    tagsStore = getGlobalTagsStore() as TagsStore;
+    tagsStore = getGlobalTagsStore();
   }
   return hexOpt(cbor, { annotate: true, tagsStore });
 }

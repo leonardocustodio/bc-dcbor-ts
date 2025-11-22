@@ -10,6 +10,7 @@ import type { Tag } from "./tag";
 import type { ByteString } from "./byte-string";
 import type { CborDate } from "./date";
 import { diagnosticOpt } from "./diag";
+import { decodeCbor } from "./decode";
 
 export type { Simple };
 
@@ -111,10 +112,7 @@ export const Cbor = {
    * @throws Error if the data is not valid CBOR or violates dCBOR encoding rules
    */
   tryFromData(data: Uint8Array): Cbor {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, no-undef, @typescript-eslint/no-unsafe-assignment
-    const { decodeCbor } = require('./decode');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    return decodeCbor(data) as Cbor;
+    return decodeCbor(data);
   },
 
   /**
