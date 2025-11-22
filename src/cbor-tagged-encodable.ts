@@ -17,8 +17,8 @@
  * @module cbor-tagged-encodable
  */
 
-import { Cbor, MajorType, CborTaggedType } from './cbor';
-import { CBORTagged } from './cbor-tagged';
+import { type Cbor, MajorType, type CborTaggedType } from './cbor';
+import type { CBORTagged } from './cbor-tagged';
 
 /**
  * Interface for types that can be encoded to CBOR with a specific tag.

@@ -13,8 +13,8 @@
  * @module cbor-tagged-codable
  */
 
-import { CBORTaggedEncodable } from './cbor-tagged-encodable';
-import { CBORTaggedDecodable } from './cbor-tagged-decodable';
+import type { CBORTaggedEncodable } from './cbor-tagged-encodable';
+import type { CBORTaggedDecodable } from './cbor-tagged-decodable';
 
 /**
  * Interface for types that can be both encoded to and decoded from CBOR with a

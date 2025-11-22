@@ -6,7 +6,7 @@ import { encodeVarInt } from "./varint";
 import { concatBytes } from "./stdlib";
 import { bytesToHex } from "./dump";
 import { hexToBytes } from "./dump";
-import { Tag } from "./tag";
+import type { Tag } from "./tag";
 import type { ByteString } from "./byte-string";
 import type { CborDate } from "./date";
 import { diagnosticOpt } from "./diag";
@@ -526,7 +526,7 @@ export namespace CborConvenience {
 
   // Map conveniences
 
-  export function tryIntoMap(c: Cbor): import('./map').CborMap {
+  export function tryIntoMap(c: Cbor): CborMap {
     if (c.type !== MajorType.Map) {
       throw new Error('Wrong type');
     }
@@ -537,11 +537,11 @@ export namespace CborConvenience {
     return c.type === MajorType.Map;
   }
 
-  export function tryMap(c: Cbor): import('./map').CborMap {
+  export function tryMap(c: Cbor): CborMap {
     return tryIntoMap(c);
   }
 
-  export function intoMap(c: Cbor): import('./map').CborMap | undefined {
+  export function intoMap(c: Cbor): CborMap | undefined {
     try {
       return tryIntoMap(c);
     } catch {
@@ -549,7 +549,7 @@ export namespace CborConvenience {
     }
   }
 
-  export function asMap(c: Cbor): import('./map').CborMap | undefined {
+  export function asMap(c: Cbor): CborMap | undefined {
     return c.type === MajorType.Map ? c.value : undefined;
   }
 

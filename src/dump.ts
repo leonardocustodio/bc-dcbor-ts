@@ -10,11 +10,11 @@
  * @module dump
  */
 
-import { Cbor, MajorType, cborData } from './cbor';
-import { CborMap } from './map';
+import { type Cbor, MajorType, cborData } from './cbor';
+import type { CborMap } from './map';
 import { encodeVarInt } from './varint';
 import { flanked, sanitized } from './string-util';
-import { TagsStore } from './tags-store';
+import type { TagsStore } from './tags-store';
 import { createTag } from './tag';
 
 /**

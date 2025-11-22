@@ -18,7 +18,7 @@
  * @module cbor-tagged
  */
 
-import { Tag } from './tag';
+import type { Tag } from './tag';
 
 /**
  * Interface for types that have associated CBOR tags.

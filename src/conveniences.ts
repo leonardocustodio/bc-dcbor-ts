@@ -7,8 +7,8 @@
  * @module conveniences
  */
 
-import { Cbor, MajorType, CborNumber, CborEncodable } from './cbor';
-import { CborMap } from './map';
+import { type Cbor, MajorType, type CborNumber, type CborEncodable } from './cbor';
+import type { CborMap } from './map';
 import { isFloat as isSimpleFloat } from './simple';
 import { decodeCbor } from './decode';
 

@@ -16,7 +16,7 @@
  * @module byte-string
  */
 
-import { Cbor, MajorType, cbor as toCbor } from './cbor';
+import { type Cbor, MajorType, cbor as toCbor } from './cbor';
 
 /**
  * Represents a CBOR byte string (major type 2).

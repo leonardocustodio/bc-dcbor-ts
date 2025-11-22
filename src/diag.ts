@@ -10,10 +10,10 @@
  * @module diag
  */
 
-import { Cbor, MajorType, Simple } from './cbor';
+import { type Cbor, MajorType, type Simple } from './cbor';
 import { bytesToHex } from './dump';
-import { CborMap } from './map';
-import { TagsStore, getGlobalTagsStore } from './tags-store';
+import type { CborMap } from './map';
+import { type TagsStore, getGlobalTagsStore } from './tags-store';
 import type { Tag } from './tag';
 import type { WalkElement } from './walk';
 

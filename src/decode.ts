@@ -1,4 +1,4 @@
-import { Cbor, CborNumber, MajorType, isCbor, encodeCbor, cborData } from "./cbor";
+import { type Cbor, type CborNumber, MajorType, isCbor, encodeCbor, cborData } from "./cbor";
 import { areBytesEqual } from "./stdlib";
 import { binary16ToNumber, binary32ToNumber, binary64ToNumber } from "./float";
 import { CborMap } from "./map";

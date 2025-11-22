@@ -13,9 +13,9 @@
  * @module cbor-tagged-decodable
  */
 
-import { Cbor, MajorType } from './cbor';
-import { CBORTagged } from './cbor-tagged';
-import { Tag } from './tag';
+import { type Cbor, MajorType } from './cbor';
+import type { CBORTagged } from './cbor-tagged';
+import type { Tag } from './tag';
 
 /**
  * Interface for types that can be decoded from CBOR with a specific tag.

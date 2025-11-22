@@ -17,14 +17,14 @@
  * @module date
  */
 
-import { Cbor, MajorType } from './cbor';
+import { type Cbor, MajorType } from './cbor';
 import { cbor } from './cbor';
-import { createTag, Tag } from './tag';
+import { createTag, type Tag } from './tag';
 import { TAG_EPOCH_DATE_TIME } from './tags';
 import {
-  CBORTaggedEncodable,
-  CBORTaggedDecodable,
-  CBORTagged,
+  type CBORTaggedEncodable,
+  type CBORTaggedDecodable,
+  type CBORTagged,
   createTaggedCbor,
   validateTag,
   extractTaggedContent
