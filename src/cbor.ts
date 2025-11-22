@@ -95,7 +95,7 @@ export const Cbor = {
    * @returns A CBOR symbolic representation
    */
   from(value: CborEncodable): Cbor {
-    return cbor(value);
+  return cbor(value);
   },
 
   // ============================================================================
@@ -112,7 +112,7 @@ export const Cbor = {
    * @throws Error if the data is not valid CBOR or violates dCBOR encoding rules
    */
   tryFromData(data: Uint8Array): Cbor {
-    return decodeCbor(data);
+  return decodeCbor(data);
   },
 
   /**
@@ -125,8 +125,8 @@ export const Cbor = {
    * @throws Error if the hex string is invalid or the resulting data is not valid dCBOR
    */
   tryFromHex(hex: string): Cbor {
-    const data = hexToBytes(hex);
-    return this.tryFromData(data);
+  const data = hexToBytes(hex);
+  return this.tryFromData(data);
   },
 
   // ============================================================================
@@ -142,7 +142,7 @@ export const Cbor = {
    * @returns A Uint8Array containing the encoded CBOR data
    */
   toCborData(cbor: Cbor): Uint8Array {
-    return cborData(cbor);
+  return cborData(cbor);
   },
 
   /**
@@ -152,7 +152,7 @@ export const Cbor = {
    * @returns A hexadecimal string representation
    */
   toHex(cbor: Cbor): string {
-    return bytesToHex(this.toCborData(cbor));
+  return bytesToHex(this.toCborData(cbor));
   },
 
   // ============================================================================
@@ -168,7 +168,7 @@ export const Cbor = {
    * @returns A string in CBOR diagnostic notation
    */
   toString(cbor: Cbor): string {
-    return diagnosticOpt(cbor, { flat: true });
+  return diagnosticOpt(cbor, { flat: true });
   },
 
   /**
@@ -181,7 +181,7 @@ export const Cbor = {
    */
   toDebugString(cbor: Cbor): string {
     // Debug string is the same as diagnostic for now
-    return diagnosticOpt(cbor, { flat: false });
+  return diagnosticOpt(cbor, { flat: false });
   },
 
   /**
@@ -191,7 +191,7 @@ export const Cbor = {
    * @returns A multi-line string in CBOR diagnostic notation
    */
   toDiagnostic(cbor: Cbor): string {
-    return diagnosticOpt(cbor, { flat: false });
+  return diagnosticOpt(cbor, { flat: false });
   },
 
   // ============================================================================
@@ -232,74 +232,74 @@ function hasToCbor(value: unknown): value is ToCbor {
  */
 export function cbor(value: CborEncodable): Cbor {
   if (isCbor(value)) {
-    return value;
+  return value;
   }
 
   if (isCborNumber(value)) {
-    if (typeof value === 'number' && isNaN(value)) {
-      return { isCbor: true, type: MajorType.Simple, value: { type: 'Float', value: NaN } };
-    } else if (typeof value === 'number' && hasFractionalPart(value)) {
-      return { isCbor: true, type: MajorType.Simple, value: { type: 'Float', value: value } };
-    } else if (value == Infinity) {
-      return { isCbor: true, type: MajorType.Simple, value: { type: 'Float', value: Infinity } };
-    } else if (value == -Infinity) {
-      return { isCbor: true, type: MajorType.Simple, value: { type: 'Float', value: -Infinity } };
-    } else if (value < 0) {
-      // Store the magnitude to encode, matching Rust's representation
-      // For a negative value n, CBOR encodes it as -1-n, so we store -n-1
-      if (typeof value === 'bigint') {
-        return { isCbor: true, type: MajorType.Negative, value: -value - 1n };
-      } else {
-        return { isCbor: true, type: MajorType.Negative, value: -value - 1 };
-      }
-    } else {
-      return { isCbor: true, type: MajorType.Unsigned, value: value };
-    }
+  if (typeof value === 'number' && isNaN(value)) {
+    return { isCbor: true, type: MajorType.Simple, value: { type: 'Float', value: NaN } };
+  } else if (typeof value === 'number' && hasFractionalPart(value)) {
+    return { isCbor: true, type: MajorType.Simple, value: { type: 'Float', value: value } };
+  } else if (value == Infinity) {
+    return { isCbor: true, type: MajorType.Simple, value: { type: 'Float', value: Infinity } };
+  } else if (value == -Infinity) {
+    return { isCbor: true, type: MajorType.Simple, value: { type: 'Float', value: -Infinity } };
+  } else if (value < 0) {
+    // Store the magnitude to encode, matching Rust's representation
+    // For a negative value n, CBOR encodes it as -1-n, so we store -n-1
+    if (typeof value === 'bigint') {
+      return { isCbor: true, type: MajorType.Negative, value: -value - 1n };
+  } else {
+      return { isCbor: true, type: MajorType.Negative, value: -value - 1 };
+  }
+  } else {
+    return { isCbor: true, type: MajorType.Unsigned, value: value };
+  }
   } else if (typeof value === 'string') {
     // dCBOR requires all text strings to be in Unicode Normalization Form C (NFC)
     // This ensures deterministic encoding regardless of how the string was composed
-    const normalized = value.normalize('NFC');
-    return { isCbor: true, type: MajorType.Text, value: normalized };
+  const normalized = value.normalize('NFC');
+  return { isCbor: true, type: MajorType.Text, value: normalized };
   } else if (value === null) {
-    return { isCbor: true, type: MajorType.Simple, value: { type: 'Null' } };
+  return { isCbor: true, type: MajorType.Simple, value: { type: 'Null' } };
   } else if (value === true) {
-    return { isCbor: true, type: MajorType.Simple, value: { type: 'True' } };
+  return { isCbor: true, type: MajorType.Simple, value: { type: 'True' } };
   } else if (value === false) {
-    return { isCbor: true, type: MajorType.Simple, value: { type: 'False' } };
+  return { isCbor: true, type: MajorType.Simple, value: { type: 'False' } };
   } else if (Array.isArray(value)) {
-    return { isCbor: true, type: MajorType.Array, value: value.map(cbor) };
+  return { isCbor: true, type: MajorType.Array, value: value.map(cbor) };
   } else if (value instanceof Uint8Array) {
-    return { isCbor: true, type: MajorType.ByteString, value: value };
+  return { isCbor: true, type: MajorType.ByteString, value: value };
   } else if (value instanceof CborMap) {
-    return { isCbor: true, type: MajorType.Map, value: value };
+  return { isCbor: true, type: MajorType.Map, value: value };
   } else if (value instanceof Map) {
-    return { isCbor: true, type: MajorType.Map, value: new CborMap(value) };
+  return { isCbor: true, type: MajorType.Map, value: new CborMap(value) };
   } else if (value instanceof Set) {
-    return { isCbor: true, type: MajorType.Array, value: Array.from(value).map(v => cbor(v as CborEncodable)) };
+  return { isCbor: true, type: MajorType.Array, value: Array.from(value).map(v => cbor(v as CborEncodable)) };
   } else if (hasTaggedCbor(value)) {
-    return value.taggedCbor();
+  return value.taggedCbor();
   } else if (hasToCbor(value)) {
-    return value.toCbor();
+  return value.toCbor();
   } else if (typeof value === 'object' && value !== null && 'tag' in value && 'value' in value) {
     // Handle plain tagged value format: { tag: number, value: unknown }
-    const keys = Object.keys(value);
-    const objValue = value as { tag: unknown; value: unknown; [key: string]: unknown };
-    if (keys.length === 2 && keys.includes('tag') && keys.includes('value')) {
-      return taggedCbor(objValue.tag, objValue.value as CborEncodable);
-    }
+  const keys = Object.keys(value);
+  const objValue = value as { tag: unknown; value: unknown; [key: string]: unknown };
+  if (keys.length === 2 && keys.includes('tag') && keys.includes('value')) {
+    return taggedCbor(objValue.tag, objValue.value as CborEncodable);
+  }
     // Not a tagged value, fall through to map handling
-    const map = new CborMap();
+  const map = new CborMap();
     for (const [key, val] of Object.entries(value)) {
-      map.set(cbor(key as CborEncodable), cbor(val as CborEncodable));
-    }
-    return { isCbor: true, type: MajorType.Map, value: map };
+    map.set(cbor(key as CborEncodable), cbor(val as CborEncodable));
+  }
+  return { isCbor: true, type: MajorType.Map, value: map };
   } else if (typeof value === 'object' && value !== null) {
     // Handle plain objects by converting to CborMap
-    const map = new CborMap();
+  const map = new CborMap();
     for (const [key, val] of Object.entries(value)) {
-      map.set(cbor(key as CborEncodable), cbor(val as CborEncodable));
-    }
-    return { isCbor: true, type: MajorType.Map, value: map };
+    map.set(cbor(key as CborEncodable), cbor(val as CborEncodable));
+  }
+  return { isCbor: true, type: MajorType.Map, value: map };
   }
 
   throw new Error("Not supported");
@@ -317,52 +317,52 @@ export function cborData(value: CborEncodable): Uint8Array {
   const c = cbor(value);
   switch (c.type) {
     case MajorType.Unsigned: {
-      return encodeVarInt(c.value, MajorType.Unsigned);
-    }
+    return encodeVarInt(c.value, MajorType.Unsigned);
+  }
     case MajorType.Negative: {
-      // Value is already stored as the magnitude to encode (matching Rust)
-      return encodeVarInt(c.value, MajorType.Negative);
-    }
+    // Value is already stored as the magnitude to encode (matching Rust)
+    return encodeVarInt(c.value, MajorType.Negative);
+  }
     case MajorType.ByteString: {
-      if (c.value instanceof Uint8Array) {
-        const lengthBytes = encodeVarInt(c.value.length, MajorType.ByteString);
-        return new Uint8Array([...lengthBytes, ...c.value]);
-      }
-      break;
-    }
+    if (c.value instanceof Uint8Array) {
+      const lengthBytes = encodeVarInt(c.value.length, MajorType.ByteString);
+      return new Uint8Array([...lengthBytes, ...c.value]);
+  }
+    break;
+  }
     case MajorType.Text: {
-      if (typeof c.value === 'string') {
-        const utf8Bytes = new TextEncoder().encode(c.value);
-        const lengthBytes = encodeVarInt(utf8Bytes.length, MajorType.Text);
-        return new Uint8Array([...lengthBytes, ...utf8Bytes]);
-      }
-      break;
-    }
+    if (typeof c.value === 'string') {
+      const utf8Bytes = new TextEncoder().encode(c.value);
+      const lengthBytes = encodeVarInt(utf8Bytes.length, MajorType.Text);
+      return new Uint8Array([...lengthBytes, ...utf8Bytes]);
+  }
+    break;
+  }
     case MajorType.Tagged: {
-      if (typeof c.tag === 'bigint' || typeof c.tag === 'number') {
-        const tagBytes = encodeVarInt(c.tag, MajorType.Tagged);
-        const valueBytes = cborData(c.value);
-        return new Uint8Array([...tagBytes, ...valueBytes]);
-      }
-      break;
-    }
+    if (typeof c.tag === 'bigint' || typeof c.tag === 'number') {
+      const tagBytes = encodeVarInt(c.tag, MajorType.Tagged);
+      const valueBytes = cborData(c.value);
+      return new Uint8Array([...tagBytes, ...valueBytes]);
+  }
+    break;
+  }
     case MajorType.Simple: {
-      // Use the simpleCborData function from simple.ts
-      return simpleCborData(c.value);
-    }
+    // Use the simpleCborData function from simple.ts
+    return simpleCborData(c.value);
+  }
     case MajorType.Array: {
-      const arrayBytes = c.value.map(cborData);
-      const flatArrayBytes = concatBytes(arrayBytes);
-      const lengthBytes = encodeVarInt(c.value.length, MajorType.Array);
-      return new Uint8Array([...lengthBytes, ...flatArrayBytes]);
-    }
+    const arrayBytes = c.value.map(cborData);
+    const flatArrayBytes = concatBytes(arrayBytes);
+    const lengthBytes = encodeVarInt(c.value.length, MajorType.Array);
+    return new Uint8Array([...lengthBytes, ...flatArrayBytes]);
+  }
     case MajorType.Map: {
-      const entries = c.value.entries;
-      const arrayBytes = entries.map(({key, value}) => concatBytes([cborData(key), cborData(value)]));
-      const flatArrayBytes = concatBytes(arrayBytes);
-      const lengthBytes = encodeVarInt(entries.length, MajorType.Map);
-      return new Uint8Array([...lengthBytes, ...flatArrayBytes]);
-    }
+    const entries = c.value.entries;
+    const arrayBytes = entries.map(({key, value}) => concatBytes([cborData(key), cborData(value)]));
+    const flatArrayBytes = concatBytes(arrayBytes);
+    const lengthBytes = encodeVarInt(entries.length, MajorType.Map);
+    return new Uint8Array([...lengthBytes, ...flatArrayBytes]);
+  }
   }
   throw new Error("Invalid CBOR");
 }
@@ -388,264 +388,262 @@ export function taggedCbor(tag: unknown, value: CborEncodable): Cbor {
 // ============================================================================
 
 /**
- * Convenience methods for CBOR values.
+ * Convenience functions for CBOR values.
  * These provide utilities for creating, checking, and extracting CBOR types.
  * Corresponds to Rust's conveniences.rs impl blocks.
  */
-export namespace CborConvenience {
-  // Byte String conveniences
 
-  export function toByteString(data: Uint8Array): Cbor {
-    return { isCbor: true, type: MajorType.ByteString, value: data };
+// ============================================================================
+// Byte String conveniences
+// ============================================================================
+
+export function toByteString(data: Uint8Array): Cbor {
+  return { isCbor: true, type: MajorType.ByteString, value: data };
   }
 
-  export function toByteStringFromHex(hex: string): Cbor {
-    return toByteString(hexToBytes(hex));
+export function toByteStringFromHex(hex: string): Cbor {
+  return toByteString(hexToBytes(hex));
+}
+
+export function tryIntoByteString(c: Cbor): Uint8Array {
+  if (c.type !== MajorType.ByteString) {
+    throw new Error('Wrong type');
+  }
+  return c.value;
   }
 
-  export function tryIntoByteString(c: Cbor): Uint8Array {
-    if (c.type !== MajorType.ByteString) {
-      throw new Error('Wrong type');
-    }
-    return c.value;
+export function isByteString(c: Cbor): boolean {
+  return c.type === MajorType.ByteString;
   }
 
-  export function isByteString(c: Cbor): boolean {
-    return c.type === MajorType.ByteString;
-  }
-
-  export function intoByteString(c: Cbor): Uint8Array | undefined {
+export function intoByteString(c: Cbor): Uint8Array | undefined {
     try {
-      return tryIntoByteString(c);
-    } catch {
-      return undefined;
-    }
-  }
-
-  export function tryByteString(c: Cbor): Uint8Array {
     return tryIntoByteString(c);
+  } catch {
+    return undefined;
+  }
   }
 
-  export function asByteString(c: Cbor): Uint8Array | undefined {
-    return c.type === MajorType.ByteString ? c.value : undefined;
+export function tryByteString(c: Cbor): Uint8Array {
+  return tryIntoByteString(c);
+  }
+
+export function asByteString(c: Cbor): Uint8Array | undefined {
+  return c.type === MajorType.ByteString ? c.value : undefined;
   }
 
   // Tagged Value conveniences
 
-  export function toTaggedValue(tag: CborNumber | Tag, item: CborEncodable): Cbor {
-    const tagValue = typeof tag === 'object' && 'value' in tag ? tag.value : tag;
-    return {
-      isCbor: true,
-      type: MajorType.Tagged,
-      tag: tagValue,
-      value: cbor(item)
-    };
+export function toTaggedValue(tag: CborNumber | Tag, item: CborEncodable): Cbor {
+  const tagValue = typeof tag === 'object' && 'value' in tag ? tag.value : tag;
+  return {
+    isCbor: true,
+    type: MajorType.Tagged,
+    tag: tagValue,
+    value: cbor(item)
+  };
   }
 
-  export function tryIntoTaggedValue(c: Cbor): [Tag, Cbor] {
-    if (c.type !== MajorType.Tagged) {
-      throw new Error('Wrong type');
-    }
-    const tag: Tag = { value: c.tag, name: `tag-${c.tag}` };
-    return [tag, c.value];
+export function tryIntoTaggedValue(c: Cbor): [Tag, Cbor] {
+  if (c.type !== MajorType.Tagged) {
+    throw new Error('Wrong type');
+  }
+  const tag: Tag = { value: c.tag, name: `tag-${c.tag}` };
+  return [tag, c.value];
   }
 
-  export function isTaggedValue(c: Cbor): boolean {
-    return c.type === MajorType.Tagged;
+export function isTaggedValue(c: Cbor): boolean {
+  return c.type === MajorType.Tagged;
   }
 
-  export function asTaggedValue(c: Cbor): [Tag, Cbor] | undefined {
-    if (c.type !== MajorType.Tagged) {
-      return undefined;
-    }
-    const tag: Tag = { value: c.tag, name: `tag-${c.tag}` };
-    return [tag, c.value];
+export function asTaggedValue(c: Cbor): [Tag, Cbor] | undefined {
+  if (c.type !== MajorType.Tagged) {
+    return undefined;
+  }
+  const tag: Tag = { value: c.tag, name: `tag-${c.tag}` };
+  return [tag, c.value];
   }
 
-  export function tryTaggedValue(c: Cbor): [Tag, Cbor] {
-    return tryIntoTaggedValue(c);
+export function tryTaggedValue(c: Cbor): [Tag, Cbor] {
+  return tryIntoTaggedValue(c);
   }
 
-  export function tryIntoExpectedTaggedValue(c: Cbor, expectedTag: CborNumber | Tag): Cbor {
-    const [tag, value] = tryIntoTaggedValue(c);
-    const expectedValue = typeof expectedTag === 'object' && 'value' in expectedTag ? expectedTag.value : expectedTag;
-    if (tag.value !== expectedValue) {
-      throw new Error(`Wrong tag: expected ${expectedValue}, got ${tag.value}`);
-    }
-    return value;
+export function tryIntoExpectedTaggedValue(c: Cbor, expectedTag: CborNumber | Tag): Cbor {
+  const [tag, value] = tryIntoTaggedValue(c);
+  const expectedValue = typeof expectedTag === 'object' && 'value' in expectedTag ? expectedTag.value : expectedTag;
+  if (tag.value !== expectedValue) {
+    throw new Error(`Wrong tag: expected ${expectedValue}, got ${tag.value}`);
+  }
+  return value;
   }
 
-  export function tryExpectedTaggedValue(c: Cbor, expectedTag: CborNumber | Tag): Cbor {
-    return tryIntoExpectedTaggedValue(c, expectedTag);
+export function tryExpectedTaggedValue(c: Cbor, expectedTag: CborNumber | Tag): Cbor {
+  return tryIntoExpectedTaggedValue(c, expectedTag);
   }
 
   // Text String conveniences
 
-  export function tryIntoText(c: Cbor): string {
-    if (c.type !== MajorType.Text) {
-      throw new Error('Wrong type');
-    }
-    return c.value;
+export function tryIntoText(c: Cbor): string {
+  if (c.type !== MajorType.Text) {
+    throw new Error('Wrong type');
+  }
+  return c.value;
   }
 
-  export function isText(c: Cbor): boolean {
-    return c.type === MajorType.Text;
+export function isText(c: Cbor): boolean {
+  return c.type === MajorType.Text;
   }
 
-  export function tryText(c: Cbor): string {
-    return tryIntoText(c);
+export function tryText(c: Cbor): string {
+  return tryIntoText(c);
   }
 
-  export function intoText(c: Cbor): string | undefined {
+export function intoText(c: Cbor): string | undefined {
     try {
-      return tryIntoText(c);
-    } catch {
-      return undefined;
-    }
+    return tryIntoText(c);
+  } catch {
+    return undefined;
+  }
   }
 
-  export function asText(c: Cbor): string | undefined {
-    return c.type === MajorType.Text ? c.value : undefined;
+export function asText(c: Cbor): string | undefined {
+  return c.type === MajorType.Text ? c.value : undefined;
   }
 
   // Array conveniences
 
-  export function tryIntoArray(c: Cbor): Cbor[] {
-    if (c.type !== MajorType.Array) {
-      throw new Error('Wrong type');
-    }
-    return c.value;
+export function tryIntoArray(c: Cbor): Cbor[] {
+  if (c.type !== MajorType.Array) {
+    throw new Error('Wrong type');
+  }
+  return c.value;
   }
 
-  export function isArray(c: Cbor): boolean {
-    return c.type === MajorType.Array;
+export function isArray(c: Cbor): boolean {
+  return c.type === MajorType.Array;
   }
 
-  export function tryArray(c: Cbor): Cbor[] {
-    return tryIntoArray(c);
+export function tryArray(c: Cbor): Cbor[] {
+  return tryIntoArray(c);
   }
 
-  export function intoArray(c: Cbor): Cbor[] | undefined {
+export function intoArray(c: Cbor): Cbor[] | undefined {
     try {
-      return tryIntoArray(c);
-    } catch {
-      return undefined;
-    }
+    return tryIntoArray(c);
+  } catch {
+    return undefined;
+  }
   }
 
-  export function asArray(c: Cbor): Cbor[] | undefined {
-    return c.type === MajorType.Array ? c.value : undefined;
+export function asArray(c: Cbor): Cbor[] | undefined {
+  return c.type === MajorType.Array ? c.value : undefined;
   }
 
   // Map conveniences
 
-  export function tryIntoMap(c: Cbor): CborMap {
-    if (c.type !== MajorType.Map) {
-      throw new Error('Wrong type');
-    }
-    return c.value;
+export function tryIntoMap(c: Cbor): CborMap {
+  if (c.type !== MajorType.Map) {
+    throw new Error('Wrong type');
+  }
+  return c.value;
   }
 
-  export function isMap(c: Cbor): boolean {
-    return c.type === MajorType.Map;
+export function isMap(c: Cbor): boolean {
+  return c.type === MajorType.Map;
   }
 
-  export function tryMap(c: Cbor): CborMap {
-    return tryIntoMap(c);
+export function tryMap(c: Cbor): CborMap {
+  return tryIntoMap(c);
   }
 
-  export function intoMap(c: Cbor): CborMap | undefined {
+export function intoMap(c: Cbor): CborMap | undefined {
     try {
-      return tryIntoMap(c);
-    } catch {
-      return undefined;
-    }
+    return tryIntoMap(c);
+  } catch {
+    return undefined;
+  }
   }
 
-  export function asMap(c: Cbor): CborMap | undefined {
-    return c.type === MajorType.Map ? c.value : undefined;
+export function asMap(c: Cbor): CborMap | undefined {
+  return c.type === MajorType.Map ? c.value : undefined;
   }
 
-  export function tryIntoSimpleValue(c: Cbor): Simple {
-    if (c.type !== MajorType.Simple) {
-      throw new Error('Wrong type');
-    }
-    return c.value;
+export function tryIntoSimpleValue(c: Cbor): Simple {
+  if (c.type !== MajorType.Simple) {
+    throw new Error('Wrong type');
+  }
+  return c.value;
   }
 
   // Boolean conveniences
 
-  export function cborFalse(): Cbor {
-    return { isCbor: true, type: MajorType.Simple, value: { type: 'False' } };
+export function cborFalse(): Cbor {
+  return { isCbor: true, type: MajorType.Simple, value: { type: 'False' } };
   }
 
-  export function cborTrue(): Cbor {
-    return { isCbor: true, type: MajorType.Simple, value: { type: 'True' } };
+export function cborTrue(): Cbor {
+  return { isCbor: true, type: MajorType.Simple, value: { type: 'True' } };
   }
 
-  export function asBool(c: Cbor): boolean | undefined {
-    if (c.type !== MajorType.Simple) return undefined;
-    if (c.value.type === 'True') return true;
-    if (c.value.type === 'False') return false;
-    return undefined;
+export function asBool(c: Cbor): boolean | undefined {
+  if (c.type !== MajorType.Simple) return undefined;
+  if (c.value.type === 'True') return true;
+  if (c.value.type === 'False') return false;
+  return undefined;
   }
 
-  export function tryIntoBool(c: Cbor): boolean {
-    const result = asBool(c);
-    if (result === undefined) {
-      throw new Error('Wrong type');
-    }
-    return result;
+export function tryIntoBool(c: Cbor): boolean {
+  const result = asBool(c);
+  if (result === undefined) {
+    throw new Error('Wrong type');
+  }
+  return result;
   }
 
-  export function isBool(c: Cbor): boolean {
-    return c.type === MajorType.Simple &&
-           (c.value.type === 'True' || c.value.type === 'False');
+export function isBool(c: Cbor): boolean {
+  return c.type === MajorType.Simple &&
+         (c.value.type === 'True' || c.value.type === 'False');
   }
 
-  export function tryBool(c: Cbor): boolean {
-    return tryIntoBool(c);
+export function tryBool(c: Cbor): boolean {
+  return tryIntoBool(c);
   }
 
-  export function isTrue(c: Cbor): boolean {
-    return c.type === MajorType.Simple && c.value.type === 'True';
+export function isTrue(c: Cbor): boolean {
+  return c.type === MajorType.Simple && c.value.type === 'True';
   }
 
-  export function isFalse(c: Cbor): boolean {
-    return c.type === MajorType.Simple && c.value.type === 'False';
+export function isFalse(c: Cbor): boolean {
+  return c.type === MajorType.Simple && c.value.type === 'False';
   }
 
   // Null conveniences
 
-  export function cborNull(): Cbor {
-    return { isCbor: true, type: MajorType.Simple, value: { type: 'Null' } };
+export function cborNull(): Cbor {
+  return { isCbor: true, type: MajorType.Simple, value: { type: 'Null' } };
   }
 
-  export function isNull(c: Cbor): boolean {
-    return c.type === MajorType.Simple && c.value.type === 'Null';
+export function isNull(c: Cbor): boolean {
+  return c.type === MajorType.Simple && c.value.type === 'Null';
   }
 
   // Number conveniences
 
-  export function isNumber(c: Cbor): boolean {
-    if (c.type === MajorType.Unsigned || c.type === MajorType.Negative) {
-      return true;
-    }
-    if (c.type === MajorType.Simple) {
-      return isSimpleFloat(c.value);
-    }
-    return false;
+export function isNumber(c: Cbor): boolean {
+  if (c.type === MajorType.Unsigned || c.type === MajorType.Negative) {
+    return true;
+  }
+  if (c.type === MajorType.Simple) {
+    return isSimpleFloat(c.value);
+  }
+  return false;
   }
 
-  export function isNaN(c: Cbor): boolean {
-    if (c.type !== MajorType.Simple) return false;
-    return isSimpleNaN(c.value);
+export function isNaN(c: Cbor): boolean {
+  if (c.type !== MajorType.Simple) return false;
+  return isSimpleNaN(c.value);
   }
 
-  export function cborNaN(): Cbor {
-    return { isCbor: true, type: MajorType.Simple, value: { type: 'Float', value: NaN } };
-  }
+export function cborNaN(): Cbor {
+  return { isCbor: true, type: MajorType.Simple, value: { type: 'Float', value: NaN } };
 }
-
-// Re-export commonly used convenience functions at top level for easier access
-export const toTaggedValue = CborConvenience.toTaggedValue;

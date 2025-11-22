@@ -68,7 +68,7 @@ import {
  * ```
  */
 export class CborDate implements CBORTagged, CBORTaggedEncodable, CBORTaggedDecodable<CborDate> {
-  private _datetime: Date;
+  #datetime: Date;
 
   /**
    * Creates a new `CborDate` from the given JavaScript `Date`.
@@ -88,7 +88,7 @@ export class CborDate implements CBORTagged, CBORTaggedEncodable, CBORTaggedDeco
    */
   static fromDatetime(dateTime: Date): CborDate {
     const instance = new CborDate();
-    instance._datetime = new Date(dateTime);
+    instance.#datetime = new Date(dateTime);
     return instance;
   }
 
@@ -266,7 +266,7 @@ export class CborDate implements CBORTagged, CBORTaggedEncodable, CBORTaggedDeco
    * ```
    */
   datetime(): Date {
-    return new Date(this._datetime);
+    return new Date(this.#datetime);
   }
 
   /**
@@ -286,8 +286,8 @@ export class CborDate implements CBORTagged, CBORTaggedEncodable, CBORTaggedDeco
    * ```
    */
   timestamp(): number {
-    const wholeSecondsSinceUnixEpoch = Math.trunc(this._datetime.getTime() / 1000);
-    const msecs = this._datetime.getTime() % 1000;
+    const wholeSecondsSinceUnixEpoch = Math.trunc(this.#datetime.getTime() / 1000);
+    const msecs = this.#datetime.getTime() % 1000;
     return wholeSecondsSinceUnixEpoch + msecs / 1000.0;
   }
 
@@ -425,7 +425,7 @@ export class CborDate implements CBORTagged, CBORTaggedEncodable, CBORTaggedDeco
     }
 
     const date = CborDate.fromTimestamp(timestamp);
-    this._datetime = date._datetime;
+    this.#datetime = date.#datetime;
     return this;
   }
 
@@ -490,7 +490,7 @@ export class CborDate implements CBORTagged, CBORTaggedEncodable, CBORTaggedDeco
    * ```
    */
   toString(): string {
-    const dt = this._datetime;
+    const dt = this.#datetime;
     // Check only hours, minutes, and seconds (not milliseconds) to match Rust behavior
     const hasTime = dt.getUTCHours() !== 0 ||
                     dt.getUTCMinutes() !== 0 ||
@@ -514,7 +514,7 @@ export class CborDate implements CBORTagged, CBORTaggedEncodable, CBORTaggedDeco
    * @returns true if dates represent the same moment in time
    */
   equals(other: CborDate): boolean {
-    return this._datetime.getTime() === other._datetime.getTime();
+    return this.#datetime.getTime() === other.#datetime.getTime();
   }
 
   /**
@@ -524,8 +524,8 @@ export class CborDate implements CBORTagged, CBORTaggedEncodable, CBORTaggedDeco
    * @returns -1 if this < other, 0 if equal, 1 if this > other
    */
   compare(other: CborDate): number {
-    const thisTime = this._datetime.getTime();
-    const otherTime = other._datetime.getTime();
+    const thisTime = this.#datetime.getTime();
+    const otherTime = other.#datetime.getTime();
     if (thisTime < otherTime) return -1;
     if (thisTime > otherTime) return 1;
     return 0;
@@ -541,6 +541,6 @@ export class CborDate implements CBORTagged, CBORTaggedEncodable, CBORTaggedDeco
   }
 
   private constructor() {
-    this._datetime = new Date();
+    this.#datetime = new Date();
   }
 }

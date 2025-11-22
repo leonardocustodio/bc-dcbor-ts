@@ -15,7 +15,34 @@
  */
 
 // Core types
-export { Cbor, MajorType, CborConvenience } from './cbor';
+export { Cbor, MajorType } from './cbor';
+
+// Convenience functions (formerly in CborConvenience namespace)
+export {
+  toByteString,
+  toByteStringFromHex,
+  isByteString,
+  asByteString,
+  toTaggedValue,
+  isTaggedValue,
+  asTaggedValue,
+  isText,
+  asText,
+  isArray,
+  asArray,
+  isMap,
+  asMap,
+  cborFalse,
+  cborTrue,
+  asBool,
+  isBool,
+  isTrue,
+  isFalse,
+  cborNull,
+  isNull,
+  isNumber,
+  cborNaN
+} from './cbor';
 export type { Simple } from './simple';
 export type {
   CborUnsignedType,

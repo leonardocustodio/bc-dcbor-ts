@@ -31,10 +31,63 @@ export {
 } from './simple';
 
 // Encoding/Decoding
-export { cbor, cborData, type CborConvenience } from './cbor';
-// Re-export convenience methods at top level for ease of use
-export { toTaggedValue } from './cbor';
+export { cbor, cborData } from './cbor';
 export { decodeCbor } from './decode';
+
+// Convenience functions (formerly in CborConvenience namespace)
+export {
+  // Byte String conveniences
+  toByteString,
+  toByteStringFromHex,
+  tryIntoByteString,
+  isByteString,
+  intoByteString,
+  tryByteString,
+  asByteString,
+  // Tagged Value conveniences
+  toTaggedValue,
+  tryIntoTaggedValue,
+  isTaggedValue,
+  asTaggedValue,
+  tryTaggedValue,
+  tryIntoExpectedTaggedValue,
+  tryExpectedTaggedValue,
+  // Text String conveniences
+  tryIntoText,
+  isText,
+  tryText,
+  intoText,
+  asText,
+  // Array conveniences
+  tryIntoArray,
+  isArray as isCborArray,
+  tryArray,
+  intoArray,
+  asArray as asCborArray,
+  // Map conveniences
+  tryIntoMap,
+  isMap as isCborMap,
+  tryMap,
+  intoMap,
+  asMap as asCborMap,
+  tryIntoSimpleValue,
+  // Boolean conveniences
+  cborFalse,
+  cborTrue,
+  asBool,
+  tryIntoBool,
+  isBool,
+  tryBool,
+  isTrue,
+  isFalse,
+  // Null conveniences
+  cborNull,
+  isNull,
+  // Number conveniences
+  isNumber,
+  isNaN as isCborNaN,
+  cborNaN
+} from './cbor';
 
 // Map and Set
 export { CborMap, type MapEntry } from './map';
