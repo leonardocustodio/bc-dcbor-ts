@@ -280,7 +280,7 @@ function formatArray(items: Cbor[], opts: DiagFormatOpts): string {
   const formatted = items.map(item => formatDiagnostic(item, opts));
 
   // Decide between single-line and multi-line based on complexity
-  const shouldUseMultiLine = !opts.flat && (
+  const shouldUseMultiLine = opts.flat !== true && (
     containsComplexStructure(items) ||
     formatted.join(', ').length > 20 ||
     formatted.some(s => s.length > 20)
@@ -288,9 +288,9 @@ function formatArray(items: Cbor[], opts: DiagFormatOpts): string {
 
   if (shouldUseMultiLine) {
     // Multi-line formatting
-    const indent = opts.indent || 0;
-    const indentStr = (opts.indentString || '    ').repeat(indent);
-    const itemIndentStr = (opts.indentString || '    ').repeat(indent + 1);
+    const indent = opts.indent ?? 0;
+    const indentStr = (opts.indentString ?? '    ').repeat(indent);
+    const itemIndentStr = (opts.indentString ?? '    ').repeat(indent + 1);
 
     const formattedWithIndent = items.map(item => {
       const childOpts = { ...opts, indent: indent + 1 };
@@ -320,7 +320,7 @@ function containsComplexStructure(items: Cbor[]): boolean {
  */
 function formatMap(map: CborMap, opts: DiagFormatOpts): string {
   // Extract entries from CborMap or use empty array
-  const entries = (map && map.entries) ? map.entries : [];
+  const entries = map?.entries ?? [];
 
   if (entries.length === 0) {
     return '{}';
@@ -341,7 +341,7 @@ function formatMap(map: CborMap, opts: DiagFormatOpts): string {
   const totalLength = formattedPairs.reduce((sum: number, pair: FormattedPair) =>
     sum + pair.key.length + pair.value.length + 2, 0); // +2 for ": "
 
-  const shouldUseMultiLine = !opts.flat && (
+  const shouldUseMultiLine = opts.flat !== true && (
     entries.some((e: { key: Cbor; value: Cbor }) =>
       e.key.type === MajorType.Array ||
       e.key.type === MajorType.Map ||
@@ -354,9 +354,9 @@ function formatMap(map: CborMap, opts: DiagFormatOpts): string {
 
   if (shouldUseMultiLine) {
     // Multi-line formatting
-    const indent = opts.indent || 0;
-    const indentStr = (opts.indentString || '    ').repeat(indent);
-    const itemIndentStr = (opts.indentString || '    ').repeat(indent + 1);
+    const indent = opts.indent ?? 0;
+    const indentStr = (opts.indentString ?? '    ').repeat(indent);
+    const itemIndentStr = (opts.indentString ?? '    ').repeat(indent + 1);
 
     const formattedEntries = formattedPairs.map((pair: FormattedPair) => {
       return `${itemIndentStr}${pair.key}:\n${itemIndentStr}${pair.value}`;

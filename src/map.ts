@@ -25,7 +25,7 @@
  */
 
 import { SortedMap } from 'collections/sorted-map';
-import { Cbor, CborEncodable } from './cbor';
+import { type Cbor, type CborEncodable, MajorType } from './cbor';
 import { cbor, cborData, encodeCbor } from './cbor';
 import { areBytesEqual, lexicographicallyCompareBytes } from './stdlib';
 import { bytesToHex } from './dump';
@@ -33,7 +33,7 @@ import { diagnostic } from './diag';
 import { extractCbor } from './conveniences';
 
 type MapKey = Uint8Array;
-export type MapEntry = { key: Cbor, value: Cbor };
+export interface MapEntry { key: Cbor; value: Cbor }
 
 /**
  * A deterministic CBOR map implementation.
@@ -232,31 +232,29 @@ export class CborMap {
 
   private static formatDebug(cbor: Cbor): string {
     switch (cbor.type) {
-      case 0: // Unsigned
+      case MajorType.Unsigned:
         return `unsigned(${cbor.value})`;
-      case 1: { // Negative
+      case MajorType.Negative: {
         const negValue = typeof cbor.value === 'bigint'
-          ? -(cbor.value as bigint) - 1n
-          : -(cbor.value as number) - 1;
+          ? -cbor.value - 1n
+          : -cbor.value - 1;
         return `negative(${negValue})`;
       }
-      case 2: { // ByteString
-        const bytes = cbor.value as Uint8Array;
-        return `bytes(${bytesToHex(bytes)})`;
+      case MajorType.ByteString: {
+        return `bytes(${bytesToHex(cbor.value)})`;
       }
-      case 3: // Text
+      case MajorType.Text:
         return `text("${cbor.value}")`;
-      case 4: { // Array
-        const items = (cbor.value as Cbor[]).map(CborMap.formatDebug);
+      case MajorType.Array: {
+        const items = cbor.value.map(CborMap.formatDebug);
         return `array([${items.join(', ')}])`;
       }
-      case 5: { // Map
-        const map = cbor.value as CborMap;
-        return map.debug;
+      case MajorType.Map: {
+        return cbor.value.debug;
       }
-      case 6: // Tagged
-        return `tagged(${cbor.tag}, ${CborMap.formatDebug(cbor.value as Cbor)})`;
-      case 7: { // Simple
+      case MajorType.Tagged:
+        return `tagged(${cbor.tag}, ${CborMap.formatDebug(cbor.value)})`;
+      case MajorType.Simple: {
         const simple = cbor.value;
         if (typeof simple === 'object' && simple !== null && 'type' in simple) {
           switch (simple.type) {

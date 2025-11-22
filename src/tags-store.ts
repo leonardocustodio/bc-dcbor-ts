@@ -7,8 +7,8 @@
  * @module tags-store
  */
 
-import { Cbor, CborNumber } from './cbor';
-import { Tag } from './tag';
+import type { Cbor, CborNumber } from './cbor';
+import type { Tag } from './tag';
 
 /**
  * Function type for custom CBOR value summarizers.
@@ -80,9 +80,9 @@ export interface TagsStoreTrait {
  * Stores tags with their names and optional summarizer functions.
  */
 export class TagsStore implements TagsStoreTrait {
-  private tagsByValue: Map<string, Tag> = new Map();
-  private tagsByName: Map<string, Tag> = new Map();
-  private summarizers: Map<string, CBORSummarizer> = new Map();
+  private readonly tagsByValue = new Map<string, Tag>();
+  private readonly tagsByName = new Map<string, Tag>();
+  private readonly summarizers = new Map<string, CBORSummarizer>();
 
   constructor() {
     // Start with empty store, matching Rust's Default implementation

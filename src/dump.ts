@@ -175,19 +175,18 @@ function dumpItems(
     }
 
     case MajorType.ByteString: {
-      const bytes = cbor.value as Uint8Array;
-      const header = encodeVarInt(bytes.length, MajorType.ByteString);
+      const header = encodeVarInt(cbor.value.length, MajorType.ByteString);
       items.push(new DumpItem(
         level,
         [header],
-        `bytes(${bytes.length})`
+        `bytes(${cbor.value.length})`
       ));
 
-      if (bytes.length > 0) {
+      if (cbor.value.length > 0) {
         let note: string | undefined = undefined;
         // Try to decode as UTF-8 string for annotation
         try {
-          const text = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+          const text = new TextDecoder('utf-8', { fatal: true }).decode(cbor.value);
           const sanitizedText = sanitized(text);
           if (sanitizedText) {
             note = flanked(sanitizedText, '"', '"');
@@ -198,7 +197,7 @@ function dumpItems(
 
         items.push(new DumpItem(
           level + 1,
-          [bytes],
+          [cbor.value],
           note
         ));
       }
@@ -206,8 +205,7 @@ function dumpItems(
     }
 
     case MajorType.Text: {
-      const text = cbor.value as string;
-      const utf8Data = new TextEncoder().encode(text);
+      const utf8Data = new TextEncoder().encode(cbor.value);
       const header = encodeVarInt(utf8Data.length, MajorType.Text);
       const headerData = [
         new Uint8Array([header[0]]),
@@ -223,14 +221,13 @@ function dumpItems(
       items.push(new DumpItem(
         level + 1,
         [utf8Data],
-        flanked(text, '"', '"')
+        flanked(cbor.value, '"', '"')
       ));
       break;
     }
 
     case MajorType.Array: {
-      const array = cbor.value as Cbor[];
-      const header = encodeVarInt(array.length, MajorType.Array);
+      const header = encodeVarInt(cbor.value.length, MajorType.Array);
       const headerData = [
         new Uint8Array([header[0]]),
         header.slice(1)
@@ -239,18 +236,17 @@ function dumpItems(
       items.push(new DumpItem(
         level,
         headerData,
-        `array(${array.length})`
+        `array(${cbor.value.length})`
       ));
 
-      for (const item of array) {
+      for (const item of cbor.value) {
         items.push(...dumpItems(item, level + 1, opts));
       }
       break;
     }
 
     case MajorType.Map: {
-      const map = cbor.value as CborMap;
-      const header = encodeVarInt(map.size, MajorType.Map);
+      const header = encodeVarInt(cbor.value.size, MajorType.Map);
       const headerData = [
         new Uint8Array([header[0]]),
         header.slice(1)
@@ -259,10 +255,10 @@ function dumpItems(
       items.push(new DumpItem(
         level,
         headerData,
-        `map(${map.size})`
+        `map(${cbor.value.size})`
       ));
 
-      for (const entry of map.entries) {
+      for (const entry of cbor.value.entries) {
         items.push(...dumpItems(entry.key, level + 1, opts));
         items.push(...dumpItems(entry.value, level + 1, opts));
       }

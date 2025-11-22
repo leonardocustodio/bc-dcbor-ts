@@ -7,14 +7,14 @@
  * @module set
  */
 
-import { Cbor, MajorType, CborEncodable } from './cbor';
+import { type Cbor, MajorType, type CborEncodable } from './cbor';
 import { cbor, cborData } from './cbor';
 import { CborMap } from './map';
 import { createTag } from './tag';
 import { TAG_SET } from './tags';
 import {
-  CBORTaggedEncodable,
-  CBORTaggedDecodable,
+  type CBORTaggedEncodable,
+  type CBORTaggedDecodable,
   createTaggedCbor,
   validateTag,
   extractTaggedContent
@@ -46,7 +46,7 @@ import { extractCbor } from './conveniences';
  * ```
  */
 export class CborSet implements CBORTaggedEncodable, CBORTaggedDecodable<CborSet> {
-  private map: CborMap;
+  private readonly map: CborMap;
 
   constructor() {
     this.map = new CborMap();

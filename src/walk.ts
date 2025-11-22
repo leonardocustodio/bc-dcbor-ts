@@ -7,7 +7,7 @@
  * @module walk
  */
 
-import { Cbor, MajorType, CborMapType, CborArrayType, CborTaggedType } from './cbor';
+import { type Cbor, MajorType, type CborMapType, type CborArrayType, type CborTaggedType } from './cbor';
 
 /**
  * Types of edges in the CBOR tree traversal.

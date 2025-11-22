@@ -54,14 +54,14 @@ export function isCbor(value: unknown): value is Cbor {
   return value !== null && typeof value === 'object' && 'isCbor' in value && value.isCbor === true;
 }
 
-export type CborUnsignedType = { isCbor: true, type: MajorType.Unsigned, value: CborNumber };
-export type CborNegativeType = { isCbor: true, type: MajorType.Negative, value: CborNumber };
-export type CborByteStringType = { isCbor: true, type: MajorType.ByteString, value: Uint8Array };
-export type CborTextType = { isCbor: true, type: MajorType.Text, value: string };
-export type CborArrayType = { isCbor: true, type: MajorType.Array, value: Cbor[] };
-export type CborMapType = { isCbor: true, type: MajorType.Map, value: CborMap };
-export type CborTaggedType = { isCbor: true, type: MajorType.Tagged, tag: CborNumber, value: Cbor };
-export type CborSimpleType = { isCbor: true, type: MajorType.Simple, value: Simple };
+export interface CborUnsignedType { isCbor: true; type: MajorType.Unsigned; value: CborNumber }
+export interface CborNegativeType { isCbor: true; type: MajorType.Negative; value: CborNumber }
+export interface CborByteStringType { isCbor: true; type: MajorType.ByteString; value: Uint8Array }
+export interface CborTextType { isCbor: true; type: MajorType.Text; value: string }
+export interface CborArrayType { isCbor: true; type: MajorType.Array; value: Cbor[] }
+export interface CborMapType { isCbor: true; type: MajorType.Map; value: CborMap }
+export interface CborTaggedType { isCbor: true; type: MajorType.Tagged; tag: CborNumber; value: Cbor }
+export interface CborSimpleType { isCbor: true; type: MajorType.Simple; value: Simple }
 
 export type Cbor = CborUnsignedType |
   CborNegativeType | CborByteStringType | CborTextType |
@@ -322,10 +322,9 @@ export function cborData(value: CborEncodable): Uint8Array {
       break;
     }
     case MajorType.Tagged: {
-      const tagged = c as CborTaggedType;
-      if (typeof tagged.tag === 'bigint' || typeof tagged.tag === 'number') {
-        const tagBytes = encodeVarInt(tagged.tag, MajorType.Tagged);
-        const valueBytes = cborData(tagged.value);
+      if (typeof c.tag === 'bigint' || typeof c.tag === 'number') {
+        const tagBytes = encodeVarInt(c.tag, MajorType.Tagged);
+        const valueBytes = cborData(c.value);
         return new Uint8Array([...tagBytes, ...valueBytes]);
       }
       break;
@@ -335,15 +334,13 @@ export function cborData(value: CborEncodable): Uint8Array {
       return simpleCborData(c.value);
     }
     case MajorType.Array: {
-      const array = c as CborArrayType;
-      const arrayBytes = array.value.map(cborData);
+      const arrayBytes = c.value.map(cborData);
       const flatArrayBytes = concatBytes(arrayBytes);
-      const lengthBytes = encodeVarInt(array.value.length, MajorType.Array);
+      const lengthBytes = encodeVarInt(c.value.length, MajorType.Array);
       return new Uint8Array([...lengthBytes, ...flatArrayBytes]);
     }
     case MajorType.Map: {
-      const map = c as CborMapType;
-      const entries = map.value.entries;
+      const entries = c.value.entries;
       const arrayBytes = entries.map(({key, value}) => concatBytes([cborData(key), cborData(value)]));
       const flatArrayBytes = concatBytes(arrayBytes);
       const lengthBytes = encodeVarInt(entries.length, MajorType.Map);

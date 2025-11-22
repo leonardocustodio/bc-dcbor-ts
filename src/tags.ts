@@ -5,7 +5,7 @@
  * @see https://www.iana.org/assignments/cbor-tags/cbor-tags.xhtml
  */
 
-import { Tag, createTag } from './tag';
+import { type Tag, createTag } from './tag';
 
 // ============================================================================
 // Standard Date/Time Tags

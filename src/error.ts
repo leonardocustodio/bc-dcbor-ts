@@ -6,7 +6,7 @@
  * @module error
  */
 
-import { Tag } from './tag';
+import type { Tag } from './tag';
 
 /**
  * A comprehensive set of errors that can occur during CBOR encoding and

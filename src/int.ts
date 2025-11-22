@@ -7,7 +7,7 @@
  * @module int
  */
 
-import { Cbor, MajorType } from './cbor';
+import { type Cbor, MajorType } from './cbor';
 
 /**
  * Check if a CBOR value is an unsigned integer.

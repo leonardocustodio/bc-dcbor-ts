@@ -7,7 +7,7 @@
  * @module string
  */
 
-import { Cbor, MajorType } from './cbor';
+import { type Cbor, MajorType } from './cbor';
 
 /**
  * Check if a CBOR value is a text string.

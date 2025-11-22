@@ -159,7 +159,7 @@ export function validateTag(cbor: Cbor, expectedTags: Tag[]): Tag {
   const tagValue = cbor.tag;
 
   const matchingTag = expectedTags.find(t => t.value === tagValue);
-  if (!matchingTag) {
+  if (matchingTag === undefined) {
     const expectedStr = expectedValues.join(' or ');
     throw new Error(`Wrong tag: expected ${expectedStr}, got ${tagValue}`);
   }

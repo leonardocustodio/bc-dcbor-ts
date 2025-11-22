@@ -641,7 +641,7 @@ function countTrailingZeros(n: bigint): number {
 // CBOR Type Extraction Utilities
 // ============================================================================
 
-import { Cbor, MajorType } from './cbor';
+import { type Cbor, MajorType } from './cbor';
 
 /**
  * Extract exact unsigned integer value.
