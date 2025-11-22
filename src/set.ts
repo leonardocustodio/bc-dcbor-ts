@@ -355,7 +355,7 @@ export class CborSet implements CBORTaggedEncodable, CBORTaggedDecodable<CborSet
   // CBORTagged Implementation
   // =========================================================================
 
-  cborTags() {
+  cborTags(): Tag[] {
     return [createTag(TAG_SET, 'set')];
   }
 

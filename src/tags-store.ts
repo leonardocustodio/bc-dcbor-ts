@@ -103,7 +103,7 @@ export class TagsStore implements TagsStoreTrait {
   insert(tag: Tag): void {
     const key = this.valueKey(tag.value);
     this.tagsByValue.set(key, tag);
-    if (tag.name) {
+    if (tag.name !== undefined) {
       this.tagsByName.set(tag.name, tag);
     }
   }
@@ -157,12 +157,12 @@ export class TagsStore implements TagsStoreTrait {
   remove(tagValue: CborNumber): boolean {
     const key = this.valueKey(tagValue);
     const tag = this.tagsByValue.get(key);
-    if (!tag) {
+    if (tag === undefined) {
       return false;
     }
 
     this.tagsByValue.delete(key);
-    if (tag.name) {
+    if (tag.name !== undefined) {
       this.tagsByName.delete(tag.name);
     }
     this.summarizers.delete(key);
@@ -190,7 +190,7 @@ export class TagsStore implements TagsStoreTrait {
 
   nameForValue(value: CborNumber): string {
     const tag = this.tagForValue(value);
-    return tag ? this.nameForTag(tag) : value.toString();
+    return tag !== undefined ? this.nameForTag(tag) : value.toString();
   }
 
   summarizer(tag: CborNumber): CBORSummarizer | undefined {
@@ -259,9 +259,7 @@ let globalTagsStore: TagsStore | undefined;
  * ```
  */
 export function getGlobalTagsStore(): TagsStore {
-  if (!globalTagsStore) {
-    globalTagsStore = new TagsStore();
-  }
+  globalTagsStore ??= new TagsStore();
   return globalTagsStore;
 }
 

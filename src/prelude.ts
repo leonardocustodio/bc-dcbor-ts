@@ -47,7 +47,8 @@ export { CborSet } from './set';
 export { CborDate } from './date';
 
 // Tag handling
-export { Tag, createTag, tagsEqual, tagToString } from './tag';
+export type { Tag } from './tag';
+export { createTag, tagsEqual, tagToString } from './tag';
 export { TagsStore, getGlobalTagsStore } from './tags-store';
 export type { TagsStoreTrait } from './tags-store';
 
