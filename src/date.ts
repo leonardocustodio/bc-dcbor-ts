@@ -396,6 +396,7 @@ export class CborDate implements CBORTagged, CBORTaggedEncodable, CBORTaggedDeco
   fromUntaggedCbor(cbor: Cbor): CborDate {
     let timestamp: number;
 
+    // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
     switch (cbor.type) {
       case MajorType.Unsigned:
         timestamp = typeof cbor.value === 'number' ? cbor.value : Number(cbor.value);

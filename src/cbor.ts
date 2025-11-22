@@ -44,7 +44,7 @@ export type CborEncodable =
   | CborEncodable[]
   | Map<unknown, unknown>
   | Set<unknown>
-  | { [key: string]: unknown };
+  | Record<string, unknown>;
 
 export function isCborNumber(value: unknown): value is CborNumber {
   return typeof value === 'number' || typeof value === 'bigint';
@@ -354,7 +354,7 @@ export function encodeCbor(value: CborEncodable): Uint8Array {
   return cborData(cbor(value));
 }
 
-export function taggedCbor(tag: CborNumber | unknown, value: CborEncodable): Cbor {
+export function taggedCbor(tag: unknown, value: CborEncodable): Cbor {
   // Validate and convert tag to CborNumber
   const tagNumber: CborNumber = typeof tag === 'number' || typeof tag === 'bigint' ? tag : Number(tag);
   return {

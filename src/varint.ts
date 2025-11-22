@@ -1,4 +1,4 @@
-import { type CborNumber, isCborNumber, MajorType } from "./cbor";
+import { type CborNumber, isCborNumber, type MajorType } from "./cbor";
 import { hasFractionalPart } from "./float";
 
 function typeBits(t: MajorType): number {

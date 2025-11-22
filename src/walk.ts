@@ -229,6 +229,7 @@ function walkInternal<State>(
   }
 
   // Recursively visit children based on CBOR type
+  // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
   switch (cbor.type) {
     case MajorType.Array:
       currentState = walkArray(cbor, level, currentState, visitor);
