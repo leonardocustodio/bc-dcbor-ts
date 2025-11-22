@@ -34,7 +34,7 @@ export {
 export { cbor, cborData } from './cbor';
 export { decodeCbor } from './decode';
 
-// Convenience functions (formerly in CborConvenience namespace)
+// Convenience functions
 export {
   // Byte String conveniences
   toByteString,
@@ -166,8 +166,8 @@ export {
   throwError
 } from './error';
 
-// Convenience functions
-export * from './conveniences';
+// Note: conveniences.ts is an internal module (not exported in Rust either)
+// The main convenience functions are exported from cbor.ts above
 
 // Float utilities
 export { f64CborData, hasFractionalPart } from './float';
@@ -190,8 +190,5 @@ export {
 } from './exact';
 
 // Type utilities
-export { asInteger, asUnsigned, asNegative } from './conveniences';
 export { ByteString } from './byte-string';
-export { asString } from './string';
-export { asArray } from './array';
-export { asBoolean } from './bool-value';
+export { isString, asString } from './string';
