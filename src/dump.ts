@@ -188,7 +188,7 @@ function dumpItems(
         try {
           const text = new TextDecoder('utf-8', { fatal: true }).decode(cbor.value);
           const sanitizedText = sanitized(text);
-          if (sanitizedText !== '') {
+          if (sanitizedText !== undefined && sanitizedText !== '') {
             note = flanked(sanitizedText, '"', '"');
           }
         } catch {

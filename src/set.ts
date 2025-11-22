@@ -10,7 +10,7 @@
 import { type Cbor, MajorType, type CborEncodable } from './cbor';
 import { cbor, cborData } from './cbor';
 import { CborMap } from './map';
-import { createTag } from './tag';
+import { createTag, type Tag } from './tag';
 import { TAG_SET } from './tags';
 import {
   type CBORTaggedEncodable,

@@ -210,7 +210,7 @@ function walkInternal<State>(
   edge: EdgeTypeVariant,
   state: State,
   visitor: Visitor<State>,
-  skipVisit: boolean = false
+  skipVisit = false
 ): State {
   let currentState = state;
   let stopDescent = false;
