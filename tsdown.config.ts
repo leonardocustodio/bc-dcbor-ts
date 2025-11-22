@@ -3,11 +3,19 @@ import { defineConfig } from 'tsdown'
 export default defineConfig({
     entry: ['src/index.ts'],
     outDir: 'dist',
-    format: ['iife', 'cjs', 'esm'],
+    format: ['cjs', 'esm', 'iife'],
     dts: true,
     sourcemap: true,
     clean: true,
     target: 'es2020',
+    platform: 'neutral',
+    external: [
+        'byte-data',
+        'collections/sorted-map',
+    ],
     globalName: 'DCBOR',
-    noExternal: ['byte-data', 'collections/sorted-map'],
+    globals: {
+        'byte-data': 'byteData',
+        'collections/sorted-map': 'SortedMap',
+    },
 })
