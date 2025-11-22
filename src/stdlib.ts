@@ -15,6 +15,7 @@
  * Check if running in Node.js environment.
  */
 export function isNode(): boolean {
+  // Global checks for cross-platform compatibility
   // eslint-disable-next-line no-restricted-globals
   return typeof process !== 'undefined' &&
          // eslint-disable-next-line no-undef, no-restricted-globals
@@ -25,6 +26,7 @@ export function isNode(): boolean {
  * Check if running in browser environment.
  */
 export function isBrowser(): boolean {
+  // Global checks for cross-platform compatibility
   // eslint-disable-next-line no-undef, no-restricted-globals
   return typeof window !== 'undefined' && typeof window.document !== 'undefined';
 }

@@ -229,6 +229,7 @@ function walkInternal<State>(
   }
 
   // Recursively visit children based on CBOR type
+  // Only container types (Array, Map, Tagged) need special handling; leaf nodes use default
   // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
   switch (cbor.type) {
     case MajorType.Array:

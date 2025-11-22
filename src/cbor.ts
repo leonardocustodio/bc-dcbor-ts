@@ -77,9 +77,9 @@ export type Cbor = CborUnsignedType |
 // eslint-disable-next-line no-redeclare
 export const Cbor = {
   // Static CBOR simple values (matching Rust naming)
-  False: { isCbor: true as const, type: MajorType.Simple as const, value: { type: 'False' as const } },
-  True: { isCbor: true as const, type: MajorType.Simple as const, value: { type: 'True' as const } },
-  Null: { isCbor: true as const, type: MajorType.Simple as const, value: { type: 'Null' as const } },
+  False: { isCbor: true, type: MajorType.Simple, value: { type: 'False' } } as const,
+  True: { isCbor: true, type: MajorType.Simple, value: { type: 'True' } } as const,
+  Null: { isCbor: true, type: MajorType.Simple, value: { type: 'Null' } } as const,
 
   // ============================================================================
   // Convenience Methods (matches Rust CBOR convenience constructors)
@@ -210,6 +210,24 @@ export interface ToCbor {
   toCbor(): Cbor;
 }
 
+export interface TaggedCborEncodable {
+  taggedCbor(): Cbor;
+}
+
+/**
+ * Type guard to check if value has taggedCbor method.
+ */
+function hasTaggedCbor(value: unknown): value is TaggedCborEncodable {
+  return typeof value === 'object' && value !== null && 'taggedCbor' in value && typeof (value as TaggedCborEncodable).taggedCbor === 'function';
+}
+
+/**
+ * Type guard to check if value has toCbor method.
+ */
+function hasToCbor(value: unknown): value is ToCbor {
+  return typeof value === 'object' && value !== null && 'toCbor' in value && typeof (value as ToCbor).toCbor === 'function';
+}
+
 /**
  * Convert any value to a CBOR representation.
  * Matches Rust's `From` trait implementations for CBOR.
@@ -260,12 +278,10 @@ export function cbor(value: CborEncodable): Cbor {
     return { isCbor: true, type: MajorType.Map, value: new CborMap(value) };
   } else if (value instanceof Set) {
     return { isCbor: true, type: MajorType.Array, value: Array.from(value).map(v => cbor(v as CborEncodable)) };
-  } else if (typeof value === 'object' && value !== null && 'taggedCbor' in value && typeof value.taggedCbor === 'function') {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    return value.taggedCbor() as Cbor;
-  } else if (typeof value === 'object' && value !== null && 'toCbor' in value && typeof value.toCbor === 'function') {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    return value.toCbor() as Cbor;
+  } else if (hasTaggedCbor(value)) {
+    return value.taggedCbor();
+  } else if (hasToCbor(value)) {
+    return value.toCbor();
   } else if (typeof value === 'object' && value !== null && 'tag' in value && 'value' in value) {
     // Handle plain tagged value format: { tag: number, value: unknown }
     const keys = Object.keys(value);

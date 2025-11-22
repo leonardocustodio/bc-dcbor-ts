@@ -396,6 +396,7 @@ export class CborDate implements CBORTagged, CBORTaggedEncodable, CBORTaggedDeco
   fromUntaggedCbor(cbor: Cbor): CborDate {
     let timestamp: number;
 
+    // Only handle numeric types (Unsigned, Negative, Float); others are invalid for dates
     // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
     switch (cbor.type) {
       case MajorType.Unsigned:
