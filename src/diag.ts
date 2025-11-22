@@ -375,12 +375,12 @@ function formatMap(map: CborMap, opts: DiagFormatOpts): string {
  */
 function formatTagged(tag: number | bigint, content: Cbor, opts: DiagFormatOpts): string {
   // Check for summarizer first
-  if (opts.summarize) {
+  if (opts.summarize === true) {
     const store = resolveTagsStore(opts.tags);
-    if (store) {
+    if (store !== undefined) {
       const summarizer = store.summarizer(tag);
-      if (summarizer) {
-        const summarized = summarizer(content, opts.flat || false);
+      if (summarizer !== undefined) {
+        const summarized = summarizer(content, opts.flat ?? false);
         return summarized;
       }
     }
@@ -388,12 +388,12 @@ function formatTagged(tag: number | bigint, content: Cbor, opts: DiagFormatOpts)
 
   // Get tag name as comment if annotation is enabled
   let comment: string | undefined;
-  if (opts.annotate) {
+  if (opts.annotate === true) {
     const store = resolveTagsStore(opts.tags);
-    if (store) {
+    if (store !== undefined) {
       const tagObj: Tag = { value: tag };
       const assignedName = store.assignedNameForTag(tagObj);
-      if (assignedName) {
+      if (assignedName !== undefined) {
         comment = assignedName;
       }
     }
@@ -407,7 +407,7 @@ function formatTagged(tag: number | bigint, content: Cbor, opts: DiagFormatOpts)
 
   // Add comment if present
   const result = `${tagStr}(${contentStr})`;
-  if (comment) {
+  if (comment !== undefined) {
     return `${result}   / ${comment} /`;
   }
   return result;

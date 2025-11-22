@@ -11,7 +11,6 @@
  */
 
 import { type Cbor, MajorType, cborData } from './cbor';
-import type { CborMap } from './map';
 import { encodeVarInt } from './varint';
 import { flanked, sanitized } from './string-util';
 import type { TagsStore } from './tags-store';
@@ -70,7 +69,7 @@ export function hex(cbor: Cbor): string {
  * @returns Hex string (possibly annotated)
  */
 export function hexOpt(cbor: Cbor, opts: HexFormatOpts = {}): string {
-  if (!opts.annotate) {
+  if (opts.annotate !== true) {
     return hex(cbor);
   }
 
@@ -95,9 +94,10 @@ export function hexOpt(cbor: Cbor, opts: HexFormatOpts = {}): string {
  */
 export function hexAnnotated(cbor: Cbor, tagsStore?: TagsStore): string {
   // Use global tags store if not provided
-  if (!tagsStore) {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, no-undef
+  if (tagsStore === undefined) {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports, no-undef, @typescript-eslint/no-unsafe-assignment
     const { getGlobalTagsStore } = require('./tags-store');
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     tagsStore = getGlobalTagsStore();
   }
   return hexOpt(cbor, { annotate: true, tagsStore });
@@ -118,7 +118,7 @@ class DumpItem {
     let column2 = '';
     let padding = '';
 
-    if (this.note) {
+    if (this.note !== undefined) {
       const paddingCount = Math.max(
         1,
         Math.min(39, noteColumn) - column1.length + 1
@@ -188,7 +188,7 @@ function dumpItems(
         try {
           const text = new TextDecoder('utf-8', { fatal: true }).decode(cbor.value);
           const sanitizedText = sanitized(text);
-          if (sanitizedText) {
+          if (sanitizedText !== '') {
             note = flanked(sanitizedText, '"', '"');
           }
         } catch {
@@ -266,8 +266,10 @@ function dumpItems(
     }
 
     case MajorType.Tagged: {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const tagValue = cbor.tag!;
+      const tagValue = cbor.tag;
+      if (tagValue === undefined) {
+        throw new Error('Tagged CBOR value must have a tag');
+      }
       const header = encodeVarInt(
         typeof tagValue === 'bigint' ? Number(tagValue) : tagValue,
         MajorType.Tagged
@@ -280,11 +282,11 @@ function dumpItems(
       const noteComponents: string[] = [`tag(${tagValue})`];
 
       // Add tag name if tags store is provided
-      if (opts.tagsStore) {
+      if (opts.tagsStore !== undefined) {
         const numericTagValue = typeof tagValue === 'bigint' ? Number(tagValue) : tagValue;
         const tag = createTag(numericTagValue);
         const tagName = opts.tagsStore.assignedNameForTag(tag);
-        if (tagName) {
+        if (tagName !== undefined) {
           noteComponents.push(tagName);
         }
       }
