@@ -24,6 +24,7 @@ import * as byteData from "byte-data";
 import { encodeVarInt } from './varint';
 import { MajorType } from './cbor';
 import { ExactU64, ExactU32, ExactU16, ExactI128 } from './exact';
+import { CborError } from './error';
 
 /**
  * Canonical NaN representation in CBOR: 0xf97e00
@@ -138,7 +139,7 @@ export function validateCanonicalF64(n: number): void {
   const f32 = binary32ToNumber(f32Bytes);
 
   if (n === f32 || n === Math.trunc(n) || Number.isNaN(n)) {
-    throw new Error('NonCanonicalNumeric: f64 should be reduced');
+    throw new CborError({ type: 'NonCanonicalNumeric' });
   }
 }
 
@@ -194,7 +195,7 @@ export function validateCanonicalF32(n: number): void {
   const f16 = binary16ToNumber(f16Bytes);
 
   if (n === f16 || n === Math.trunc(n) || Number.isNaN(n)) {
-    throw new Error('NonCanonicalNumeric: f32 should be reduced');
+    throw new CborError({ type: 'NonCanonicalNumeric' });
   }
 }
 
@@ -246,7 +247,7 @@ export function validateCanonicalF16(value: number): void {
   const bits = new DataView(f16Bytes.buffer).getUint16(0, false);
 
   if (f === Math.trunc(f) || (Number.isNaN(value) && bits !== 0x7e00)) {
-    throw new Error('NonCanonicalNumeric: f16 not canonical');
+    throw new CborError({ type: 'NonCanonicalNumeric' });
   }
 }
 

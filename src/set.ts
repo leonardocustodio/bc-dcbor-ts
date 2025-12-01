@@ -20,6 +20,7 @@ import {
   extractTaggedContent
 } from './cbor-tagged';
 import { extractCbor } from './conveniences';
+import { CborError } from './error';
 
 /**
  * CBOR Set type with tag(258) encoding.
@@ -371,7 +372,7 @@ export class CborSet implements CBORTaggedEncodable, CBORTaggedDecodable<CborSet
 
   fromUntaggedCbor(c: Cbor): CborSet {
     if (c.type !== MajorType.Array) {
-      throw new Error('Expected array for set encoding');
+      throw new CborError({ type: 'WrongType' });
     }
 
     this.clear();

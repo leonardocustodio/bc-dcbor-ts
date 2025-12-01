@@ -29,6 +29,7 @@ import { areBytesEqual, lexicographicallyCompareBytes } from './stdlib';
 import { bytesToHex } from './dump';
 import { diagnostic } from './diag';
 import { extractCbor } from './conveniences';
+import { CborError } from './error';
 
 type MapKey = Uint8Array;
 export interface MapEntry { key: Cbor; value: Cbor }
@@ -110,7 +111,7 @@ export class CborMap {
   extract<K extends CborEncodable, V>(key: K): V {
     const value = this.get<K, V>(key);
     if (value === undefined) {
-      throw new Error('MissingMapKey');
+      throw new CborError({ type: 'MissingMapKey' });
     }
     return value;
   }
@@ -204,11 +205,11 @@ export class CborMap {
     const keyCbor = cbor(key);
     const newKey = cborData(keyCbor);
     if (this.#dict.has(newKey)) {
-      throw new Error('duplicate map key');
+      throw new CborError({ type: 'DuplicateMapKey' });
     }
     const lastEntryKey = this.#makeKey(lastEntry.key);
     if(lexicographicallyCompareBytes(newKey, lastEntryKey) <= 0) {
-      throw new Error('map keys must be in ascending canonical order');
+      throw new CborError({ type: 'MisorderedMapKey' });
     }
     this.#dict.set(newKey, { key: keyCbor, value: cbor(value) });
   }

@@ -15,8 +15,9 @@
  * @module cbor-tagged-encodable
  */
 
-import { type Cbor, MajorType, type CborTaggedType } from './cbor';
+import { type Cbor, MajorType, attachMethods } from './cbor';
 import type { CBORTagged } from './cbor-tagged';
+import { CborError } from './error';
 
 /**
  * Interface for types that can be encoded to CBOR with a specific tag.
@@ -119,21 +120,19 @@ export interface CBORTaggedEncodable extends CBORTagged {
 export function createTaggedCbor(encodable: CBORTaggedEncodable): Cbor {
   const tags = encodable.cborTags();
   if (tags.length === 0) {
-    throw new Error('No tags defined for this type');
+    throw new CborError({ type: 'Custom', message: 'No tags defined for this type' });
   }
 
   const tag = tags[0];
   if (tag === undefined) {
-    throw new Error('Tag is undefined');
+    throw new CborError({ type: 'Custom', message: 'Tag is undefined' });
   }
   const untagged = encodable.untaggedCbor();
 
-  const result: CborTaggedType = {
+  return attachMethods({
     isCbor: true,
     type: MajorType.Tagged,
     tag: tag.value,
     value: untagged
-  };
-
-  return result;
+  });
 }

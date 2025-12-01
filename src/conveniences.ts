@@ -11,6 +11,7 @@ import { type Cbor, MajorType, type CborNumber, type CborEncodable } from './cbo
 import type { CborMap } from './map';
 import { isFloat as isSimpleFloat } from './simple';
 import { decodeCbor } from './decode';
+import { CborError } from './error';
 
 // ============================================================================
 // Extraction
@@ -380,7 +381,7 @@ export function asNumber(cbor: Cbor): CborNumber | undefined {
 export function expectUnsigned(cbor: Cbor): number | bigint {
   const value = asUnsigned(cbor);
   if (value === undefined) {
-    throw new Error(`Expected unsigned integer, got ${cbor.type}`);
+    throw new CborError({ type: 'WrongType' });
   }
   return value;
 }
@@ -395,7 +396,7 @@ export function expectUnsigned(cbor: Cbor): number | bigint {
 export function expectNegative(cbor: Cbor): number | bigint {
   const value = asNegative(cbor);
   if (value === undefined) {
-    throw new Error(`Expected negative integer, got ${cbor.type}`);
+    throw new CborError({ type: 'WrongType' });
   }
   return value;
 }
@@ -410,7 +411,7 @@ export function expectNegative(cbor: Cbor): number | bigint {
 export function expectInteger(cbor: Cbor): number | bigint {
   const value = asInteger(cbor);
   if (value === undefined) {
-    throw new Error(`Expected integer, got ${cbor.type}`);
+    throw new CborError({ type: 'WrongType' });
   }
   return value;
 }
@@ -425,7 +426,7 @@ export function expectInteger(cbor: Cbor): number | bigint {
 export function expectBytes(cbor: Cbor): Uint8Array {
   const value = asBytes(cbor);
   if (value === undefined) {
-    throw new Error(`Expected byte string, got ${cbor.type}`);
+    throw new CborError({ type: 'WrongType' });
   }
   return value;
 }
@@ -440,7 +441,7 @@ export function expectBytes(cbor: Cbor): Uint8Array {
 export function expectText(cbor: Cbor): string {
   const value = asText(cbor);
   if (value === undefined) {
-    throw new Error(`Expected text string, got ${cbor.type}`);
+    throw new CborError({ type: 'WrongType' });
   }
   return value;
 }
@@ -455,7 +456,7 @@ export function expectText(cbor: Cbor): string {
 export function expectArray(cbor: Cbor): Cbor[] {
   const value = asArray(cbor);
   if (value === undefined) {
-    throw new Error(`Expected array, got ${cbor.type}`);
+    throw new CborError({ type: 'WrongType' });
   }
   return value;
 }
@@ -470,7 +471,7 @@ export function expectArray(cbor: Cbor): Cbor[] {
 export function expectMap(cbor: Cbor): CborMap {
   const value = asMap(cbor);
   if (value === undefined) {
-    throw new Error(`Expected map, got ${cbor.type}`);
+    throw new CborError({ type: 'WrongType' });
   }
   return value;
 }
@@ -485,7 +486,7 @@ export function expectMap(cbor: Cbor): CborMap {
 export function expectBoolean(cbor: Cbor): boolean {
   const value = asBoolean(cbor);
   if (value === undefined) {
-    throw new Error(`Expected boolean, got ${cbor.type}`);
+    throw new CborError({ type: 'WrongType' });
   }
   return value;
 }
@@ -500,7 +501,7 @@ export function expectBoolean(cbor: Cbor): boolean {
 export function expectFloat(cbor: Cbor): number {
   const value = asFloat(cbor);
   if (value === undefined) {
-    throw new Error(`Expected float, got ${cbor.type}`);
+    throw new CborError({ type: 'WrongType' });
   }
   return value;
 }
@@ -515,7 +516,7 @@ export function expectFloat(cbor: Cbor): number {
 export function expectNumber(cbor: Cbor): CborNumber {
   const value = asNumber(cbor);
   if (value === undefined) {
-    throw new Error(`Expected number, got ${cbor.type}`);
+    throw new CborError({ type: 'WrongType' });
   }
   return value;
 }
@@ -721,7 +722,7 @@ export function getTaggedContent(cbor: Cbor, tag: number | bigint): Cbor | undef
 export function expectTaggedContent(cbor: Cbor, tag: number | bigint): Cbor {
   const content = getTaggedContent(cbor, tag);
   if (content === undefined) {
-    throw new Error(`Expected tag ${tag}, got ${cbor.type}`);
+    throw new CborError({ type: 'WrongType' });
   }
   return content;
 }

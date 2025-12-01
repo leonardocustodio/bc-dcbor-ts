@@ -1,5 +1,6 @@
 import { type CborNumber, isCborNumber, type MajorType } from "./cbor";
 import { hasFractionalPart } from "./float";
+import { CborError } from "./error";
 
 function typeBits(t: MajorType): number {
   return t << 5;
@@ -8,11 +9,11 @@ function typeBits(t: MajorType): number {
 export function encodeVarInt(value: CborNumber, majorType: MajorType): Uint8Array {
   // throw an error if the value is negative.
   if (value < 0) {
-    throw new Error("Value out of range");
+    throw new CborError({ type: 'OutOfRange' });
   }
   // throw an error if the value is a number with a fractional part.
   if (typeof value === 'number' && hasFractionalPart(value)) {
-    throw new Error("Value out of range");
+    throw new CborError({ type: 'OutOfRange' });
   }
   const type = typeBits(majorType);
   // If the value is a `number` or a `bigint` that can be represented as a `number`, convert it to a `number`.
@@ -45,7 +46,7 @@ export function encodeVarInt(value: CborNumber, majorType: MajorType): Uint8Arra
     value = BigInt(value);
     const bitsNeeded = Math.ceil(Math.log2(Number(value)) / 8) * 8;
     if (bitsNeeded > 64) {
-      throw new Error("Value out of range");
+      throw new CborError({ type: 'OutOfRange' });
     }
     const length = Math.ceil(bitsNeeded / 8) + 1;
     const buffer = new ArrayBuffer(length);

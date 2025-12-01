@@ -208,11 +208,47 @@ export function Err<T>(error: Error): Result<T> {
 }
 
 /**
- * Helper to throw an Error as a JavaScript Error object.
+ * Typed error class for all CBOR-related errors.
  *
- * This is used when we need to throw for backwards compatibility
- * with existing code that uses try/catch.
+ * Wraps the discriminated union Error type in a JavaScript Error object
+ * for proper error handling with stack traces.
+ *
+ * @example
+ * ```typescript
+ * throw new CborError({ type: 'Underrun' });
+ * throw new CborError({ type: 'WrongTag', expected: tag1, actual: tag2 });
+ * ```
  */
-export function throwError(error: Error): never {
-  throw new Error(errorToString(error));
+export class CborError extends Error {
+  /**
+   * The structured error information.
+   */
+  public readonly errorType: Error;
+
+  /**
+   * Create a new CborError.
+   *
+   * @param errorType - The discriminated union error type
+   * @param message - Optional custom message (defaults to errorToString(errorType))
+   */
+  constructor(errorType: Error, message?: string) {
+    super(message ?? errorToString(errorType));
+    this.name = 'CborError';
+    this.errorType = errorType;
+
+    // Maintains proper stack trace for where error was thrown (V8 only)
+    if (Error.captureStackTrace !== undefined) {
+      Error.captureStackTrace(this, CborError);
+    }
+  }
+
+  /**
+   * Check if an error is a CborError.
+   *
+   * @param error - Error to check
+   * @returns True if error is a CborError
+   */
+  static isCborError(error: unknown): error is CborError {
+    return error instanceof CborError;
+  }
 }

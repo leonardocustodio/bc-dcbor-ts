@@ -27,6 +27,7 @@ import {
   validateTag,
   extractTaggedContent
 } from './cbor-tagged';
+import { CborError } from './error';
 
 /**
  * A CBOR-friendly representation of a date and time.
@@ -208,7 +209,7 @@ export class CborDate implements CBORTagged, CBORTaggedEncodable, CBORTaggedDeco
     // Try parsing as ISO 8601 date string
     const dt = new Date(value);
     if (isNaN(dt.getTime())) {
-      throw new Error(`Invalid date string: ${value}`);
+      throw new CborError({ type: 'InvalidDate', message: `Invalid date string: ${value}` });
     }
     return CborDate.fromDatetime(dt);
   }
@@ -414,12 +415,12 @@ export class CborDate implements CBORTagged, CBORTaggedEncodable, CBORTaggedDeco
         if (cbor.value.type === 'Float') {
           timestamp = cbor.value.value;
         } else {
-          throw new Error('Invalid date CBOR: expected numeric value');
+          throw new CborError({ type: 'Custom', message: 'Invalid date CBOR: expected numeric value' });
         }
         break;
 
       default:
-        throw new Error('Invalid date CBOR: expected numeric value');
+        throw new CborError({ type: 'Custom', message: 'Invalid date CBOR: expected numeric value' });
     }
 
     const date = CborDate.fromTimestamp(timestamp);
@@ -498,7 +499,7 @@ export class CborDate implements CBORTagged, CBORTaggedEncodable, CBORTaggedDeco
       // Midnight (with possible subsecond precision) - show only date
       const datePart = dt.toISOString().split('T')[0];
       if (datePart === undefined) {
-        throw new Error('Invalid ISO string format');
+        throw new CborError({ type: 'Custom', message: 'Invalid ISO string format' });
       }
       return datePart;
     } else {

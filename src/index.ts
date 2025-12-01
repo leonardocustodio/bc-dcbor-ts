@@ -33,59 +33,11 @@ export {
 export { cbor, cborData } from './cbor';
 export { decodeCbor } from './decode';
 
-// Convenience functions
+// Factory functions (static creators)
 export {
-  // Byte String conveniences
   toByteString,
   toByteStringFromHex,
-  tryIntoByteString,
-  isByteString,
-  intoByteString,
-  tryByteString,
-  asByteString,
-  // Tagged Value conveniences
-  toTaggedValue,
-  tryIntoTaggedValue,
-  isTaggedValue,
-  asTaggedValue,
-  tryTaggedValue,
-  tryIntoExpectedTaggedValue,
-  tryExpectedTaggedValue,
-  // Text String conveniences
-  tryIntoText,
-  isText,
-  tryText,
-  intoText,
-  asText,
-  // Array conveniences
-  tryIntoArray,
-  isArray as isCborArray,
-  tryArray,
-  intoArray,
-  asArray as asCborArray,
-  // Map conveniences
-  tryIntoMap,
-  isMap as isCborMap,
-  tryMap,
-  intoMap,
-  asMap as asCborMap,
-  tryIntoSimpleValue,
-  // Boolean conveniences
-  cborFalse,
-  cborTrue,
-  asBool,
-  tryIntoBool,
-  isBool,
-  tryBool,
-  isTrue,
-  isFalse,
-  // Null conveniences
-  cborNull,
-  isNull,
-  // Number conveniences
-  isNumber,
-  isNaN as isCborNaN,
-  cborNaN
+  toTaggedValue
 } from './cbor';
 
 // Map and Set
@@ -99,9 +51,7 @@ export {
   type CBORTaggedEncodable,
   type CBORTaggedDecodable,
   type CBORTaggedCodable,
-  createTaggedCbor,
-  validateTag,
-  extractTaggedContent
+  createTaggedCbor
 } from './cbor-tagged';
 export { TagsStore, type TagsStoreTrait } from './tags-store';
 export * from './tags';
@@ -112,9 +62,6 @@ export { CborDate } from './date';
 
 // Diagnostic formatting
 export {
-  diagnostic,
-  diagnosticFlat,
-  diagnosticAnnotated,
   diagnosticOpt,
   summary,
   type DiagFormatOpts
@@ -122,9 +69,7 @@ export {
 
 // Hex formatting
 export {
-  hex,
   hexOpt,
-  hexAnnotated,
   hexToBytes,
   bytesToHex,
   type HexFormatOpts
@@ -132,7 +77,6 @@ export {
 
 // Walk/Traversal functionality
 export {
-  walk,
   type EdgeType,
   type EdgeTypeVariant,
   type WalkElement,
@@ -163,7 +107,7 @@ export {
   Err,
   errorMsg,
   errorToString,
-  throwError
+  CborError
 } from './error';
 
 // Note: conveniences.ts is an internal module (not exported in Rust either)
@@ -179,16 +123,5 @@ export {
   decodeVarIntData
 } from './varint';
 
-// Exact type extraction
-export {
-  exactUnsigned,
-  exactNegative,
-  exactInteger,
-  exactString,
-  exactBytes,
-  exactArray
-} from './exact';
-
 // Type utilities
 export { ByteString } from './byte-string';
-export { isString, asString } from './string';

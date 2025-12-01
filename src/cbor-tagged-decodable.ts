@@ -14,6 +14,7 @@
 import { type Cbor, MajorType } from './cbor';
 import type { CBORTagged } from './cbor-tagged';
 import type { Tag } from './tag';
+import { CborError } from './error';
 
 /**
  * Interface for types that can be decoded from CBOR with a specific tag.
@@ -150,7 +151,7 @@ export interface CBORTaggedDecodable<T> extends CBORTagged {
  */
 export function validateTag(cbor: Cbor, expectedTags: Tag[]): Tag {
   if (cbor.type !== MajorType.Tagged) {
-    throw new Error('Expected tagged CBOR value');
+    throw new CborError({ type: 'WrongType' });
   }
 
   const expectedValues = expectedTags.map(t => t.value);
@@ -159,7 +160,7 @@ export function validateTag(cbor: Cbor, expectedTags: Tag[]): Tag {
   const matchingTag = expectedTags.find(t => t.value === tagValue);
   if (matchingTag === undefined) {
     const expectedStr = expectedValues.join(' or ');
-    throw new Error(`Wrong tag: expected ${expectedStr}, got ${tagValue}`);
+    throw new CborError({ type: 'Custom', message: `Wrong tag: expected ${expectedStr}, got ${tagValue}` });
   }
 
   return matchingTag;
@@ -174,7 +175,7 @@ export function validateTag(cbor: Cbor, expectedTags: Tag[]): Tag {
  */
 export function extractTaggedContent(cbor: Cbor): Cbor {
   if (cbor.type !== MajorType.Tagged) {
-    throw new Error('Expected tagged CBOR value');
+    throw new CborError({ type: 'WrongType' });
   }
   return cbor.value;
 }

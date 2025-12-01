@@ -8,6 +8,7 @@
  */
 
 import { type Cbor, MajorType, type CborMapType, type CborArrayType, type CborTaggedType } from './cbor';
+import { CborError } from './error';
 
 /**
  * Types of edges in the CBOR tree traversal.
@@ -269,7 +270,7 @@ function walkArray<State>(
   for (let index = 0; index < cbor.value.length; index++) {
     const item = cbor.value[index];
     if (item === undefined) {
-      throw new Error(`Array element at index ${index} is undefined`);
+      throw new CborError({ type: 'Custom', message: `Array element at index ${index} is undefined` });
     }
     currentState = walkInternal(
       item,

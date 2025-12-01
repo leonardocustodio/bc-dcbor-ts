@@ -14,12 +14,7 @@ import {
   Cbor,
   CborEncodable,
   CborMap,
-  diagnostic,
-  diagnosticFlat,
-  diagnosticAnnotated,
   summary,
-  hex,
-  hexAnnotated,
   registerTags,
   CborDate
 } from '../src';
@@ -176,20 +171,20 @@ function generateDebugDescription(cborValue: Cbor): string {
 function cborDiagnostic(value: CborEncodable): string {
   const cborValue = cbor(value);
   // Use library's diagnostic function (flat output)
-  return diagnostic(cborValue);
+  return cborValue.toDiagnostic();
 }
 
 
 // Helper function to get annotated diagnostic (matches Rust's cbor.diagnostic_annotated())
 function cborDiagnosticAnnotated(value: CborEncodable): string {
   const cborValue = cbor(value);
-  return diagnosticAnnotated(cborValue);
+  return cborValue.toDiagnosticAnnotated();
 }
 
 // Helper function to get flat diagnostic (matches Rust's cbor.diagnostic_flat())
 function cborDiagnosticFlat(value: CborEncodable): string {
   const cborValue = cbor(value);
-  return diagnosticFlat(cborValue);
+  return cborValue.toString();
 }
 
 // Helper function to get summary (matches Rust's cbor.summary())
@@ -201,13 +196,13 @@ function cborSummary(value: CborEncodable): string {
 // Helper function to get hex (matches Rust's cbor.hex())
 function cborHex(value: CborEncodable): string {
   const cborValue = cbor(value);
-  return hex(cborValue);
+  return cborValue.toHex();
 }
 
 // Helper function to get annotated hex (matches Rust's cbor.hex_annotated())
 function cborHexAnnotated(value: CborEncodable): string {
   const cborValue = cbor(value);
-  return hexAnnotated(cborValue);
+  return cborValue.toHexAnnotated();
 }
 
 // Main test runner function - matches Rust's run() function

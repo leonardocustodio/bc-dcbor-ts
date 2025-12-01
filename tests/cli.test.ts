@@ -20,9 +20,6 @@ import {
   cbor,
   CborEncodable,
   CborMap,
-  diagnosticFlat,
-  hex,
-  hexAnnotated,
   decodeCbor
 } from '../src';
 
@@ -201,7 +198,7 @@ function parseDiagnostic(input: string): CborEncodable {
  */
 function toHex(value: CborEncodable): string {
   const cborValue = cbor(value);
-  return hex(cborValue);
+  return cborValue.toHex();
 }
 
 /**
@@ -209,7 +206,7 @@ function toHex(value: CborEncodable): string {
  */
 function toDiagnostic(value: CborEncodable): string {
   const cborValue = cbor(value);
-  return diagnosticFlat(cborValue);
+  return cborValue.toString();
 }
 
 /**
@@ -217,7 +214,7 @@ function toDiagnostic(value: CborEncodable): string {
  */
 function toAnnotatedHex(value: CborEncodable): string {
   const cborValue = cbor(value);
-  return hexAnnotated(cborValue);
+  return cborValue.toHexAnnotated();
 }
 
 /**
@@ -235,7 +232,7 @@ function hexToDiagnostic(hexStr: string): string {
 
   // Decode and convert to diagnostic
   const decoded = decodeCbor(bytes);
-  return diagnosticFlat(decoded);
+  return decoded.toString();
 }
 
 /**

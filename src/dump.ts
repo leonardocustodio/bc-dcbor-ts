@@ -14,6 +14,7 @@ import { flanked, sanitized } from './string-util';
 import type { TagsStore } from './tags-store';
 import { getGlobalTagsStore } from './tags-store';
 import { createTag } from './tag';
+import { CborError } from './error';
 
 /**
  * Options for hex formatting.
@@ -203,7 +204,7 @@ function dumpItems(
       const header = encodeVarInt(utf8Data.length, MajorType.Text);
       const firstByte = header[0];
       if (firstByte === undefined) {
-        throw new Error('Invalid varint encoding');
+        throw new CborError({ type: 'Custom', message: 'Invalid varint encoding' });
       }
       const headerData = [
         new Uint8Array([firstByte]),
@@ -228,7 +229,7 @@ function dumpItems(
       const header = encodeVarInt(cbor.value.length, MajorType.Array);
       const firstByte = header[0];
       if (firstByte === undefined) {
-        throw new Error('Invalid varint encoding');
+        throw new CborError({ type: 'Custom', message: 'Invalid varint encoding' });
       }
       const headerData = [
         new Uint8Array([firstByte]),
@@ -251,7 +252,7 @@ function dumpItems(
       const header = encodeVarInt(cbor.value.size, MajorType.Map);
       const firstByte = header[0];
       if (firstByte === undefined) {
-        throw new Error('Invalid varint encoding');
+        throw new CborError({ type: 'Custom', message: 'Invalid varint encoding' });
       }
       const headerData = [
         new Uint8Array([firstByte]),
@@ -274,7 +275,7 @@ function dumpItems(
     case MajorType.Tagged: {
       const tagValue = cbor.tag;
       if (tagValue === undefined) {
-        throw new Error('Tagged CBOR value must have a tag');
+        throw new CborError({ type: 'Custom', message: 'Tagged CBOR value must have a tag' });
       }
       const header = encodeVarInt(
         typeof tagValue === 'bigint' ? Number(tagValue) : tagValue,
@@ -282,7 +283,7 @@ function dumpItems(
       );
       const firstByte = header[0];
       if (firstByte === undefined) {
-        throw new Error('Invalid varint encoding');
+        throw new CborError({ type: 'Custom', message: 'Invalid varint encoding' });
       }
       const headerData = [
         new Uint8Array([firstByte]),
