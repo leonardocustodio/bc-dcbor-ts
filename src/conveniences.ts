@@ -284,7 +284,7 @@ export const asText = (cbor: Cbor): string | undefined => {
  * @param cbor - CBOR value
  * @returns Array or undefined
  */
-export const asArray = (cbor: Cbor): Cbor[] | undefined => {
+export const asArray = (cbor: Cbor): readonly Cbor[] | undefined => {
   if (cbor.type === MajorType.Array) {
     return cbor.value;
   }
@@ -453,7 +453,7 @@ export const expectText = (cbor: Cbor): string => {
  * @returns Array
  * @throws Error if not array
  */
-export const expectArray = (cbor: Cbor): Cbor[] => {
+export const expectArray = (cbor: Cbor): readonly Cbor[] => {
   const value = asArray(cbor);
   if (value === undefined) {
     throw new CborError({ type: 'WrongType' });
