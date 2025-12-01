@@ -7,7 +7,21 @@
  * @module conveniences
  */
 
-import { type Cbor, MajorType, type CborNumber, type CborEncodable } from './cbor';
+import {
+  type Cbor,
+  MajorType,
+  type CborNumber,
+  type CborEncodable,
+  type CborUnsignedType,
+  type CborNegativeType,
+  type CborByteStringType,
+  type CborTextType,
+  type CborArrayType,
+  type CborMapType,
+  type CborTaggedType,
+  type CborSimpleType,
+  type CborMethods
+} from './cbor';
 import type { CborMap } from './map';
 import { isFloat as isSimpleFloat } from './simple';
 import { decodeCbor } from './decode';
@@ -74,7 +88,7 @@ export const extractCbor = (cbor: Cbor | Uint8Array): unknown => {
  * }
  * ```
  */
-export const isUnsigned = (cbor: Cbor): boolean => {
+export const isUnsigned = (cbor: Cbor): cbor is CborUnsignedType & CborMethods => {
   return cbor.type === MajorType.Unsigned;
 };
 
@@ -84,7 +98,7 @@ export const isUnsigned = (cbor: Cbor): boolean => {
  * @param cbor - CBOR value to check
  * @returns True if value is negative integer
  */
-export const isNegative = (cbor: Cbor): boolean => {
+export const isNegative = (cbor: Cbor): cbor is CborNegativeType & CborMethods => {
   return cbor.type === MajorType.Negative;
 };
 
@@ -94,7 +108,7 @@ export const isNegative = (cbor: Cbor): boolean => {
  * @param cbor - CBOR value to check
  * @returns True if value is an integer
  */
-export const isInteger = (cbor: Cbor): boolean => {
+export const isInteger = (cbor: Cbor): cbor is (CborUnsignedType | CborNegativeType) & CborMethods => {
   return cbor.type === MajorType.Unsigned || cbor.type === MajorType.Negative;
 };
 
@@ -104,7 +118,7 @@ export const isInteger = (cbor: Cbor): boolean => {
  * @param cbor - CBOR value to check
  * @returns True if value is byte string
  */
-export const isBytes = (cbor: Cbor): boolean => {
+export const isBytes = (cbor: Cbor): cbor is CborByteStringType & CborMethods => {
   return cbor.type === MajorType.ByteString;
 };
 
@@ -114,7 +128,7 @@ export const isBytes = (cbor: Cbor): boolean => {
  * @param cbor - CBOR value to check
  * @returns True if value is text string
  */
-export const isText = (cbor: Cbor): boolean => {
+export const isText = (cbor: Cbor): cbor is CborTextType & CborMethods => {
   return cbor.type === MajorType.Text;
 };
 
@@ -124,7 +138,7 @@ export const isText = (cbor: Cbor): boolean => {
  * @param cbor - CBOR value to check
  * @returns True if value is array
  */
-export const isArray = (cbor: Cbor): boolean => {
+export const isArray = (cbor: Cbor): cbor is CborArrayType & CborMethods => {
   return cbor.type === MajorType.Array;
 };
 
@@ -134,7 +148,7 @@ export const isArray = (cbor: Cbor): boolean => {
  * @param cbor - CBOR value to check
  * @returns True if value is map
  */
-export const isMap = (cbor: Cbor): boolean => {
+export const isMap = (cbor: Cbor): cbor is CborMapType & CborMethods => {
   return cbor.type === MajorType.Map;
 };
 
@@ -144,7 +158,7 @@ export const isMap = (cbor: Cbor): boolean => {
  * @param cbor - CBOR value to check
  * @returns True if value is tagged
  */
-export const isTagged = (cbor: Cbor): boolean => {
+export const isTagged = (cbor: Cbor): cbor is CborTaggedType & CborMethods => {
   return cbor.type === MajorType.Tagged;
 };
 
@@ -154,7 +168,7 @@ export const isTagged = (cbor: Cbor): boolean => {
  * @param cbor - CBOR value to check
  * @returns True if value is simple
  */
-export const isSimple = (cbor: Cbor): boolean => {
+export const isSimple = (cbor: Cbor): cbor is CborSimpleType & CborMethods => {
   return cbor.type === MajorType.Simple;
 };
 
@@ -164,7 +178,7 @@ export const isSimple = (cbor: Cbor): boolean => {
  * @param cbor - CBOR value to check
  * @returns True if value is boolean
  */
-export const isBoolean = (cbor: Cbor): boolean => {
+export const isBoolean = (cbor: Cbor): cbor is CborSimpleType & CborMethods & { readonly value: { readonly type: 'False' } | { readonly type: 'True' } } => {
   if (cbor.type !== MajorType.Simple) {
     return false;
   }
@@ -177,7 +191,7 @@ export const isBoolean = (cbor: Cbor): boolean => {
  * @param cbor - CBOR value to check
  * @returns True if value is null
  */
-export const isNull = (cbor: Cbor): boolean => {
+export const isNull = (cbor: Cbor): cbor is CborSimpleType & CborMethods & { readonly value: { readonly type: 'Null' } } => {
   if (cbor.type !== MajorType.Simple) {
     return false;
   }
@@ -190,7 +204,7 @@ export const isNull = (cbor: Cbor): boolean => {
  * @param cbor - CBOR value to check
  * @returns True if value is float
  */
-export const isFloat = (cbor: Cbor): boolean => {
+export const isFloat = (cbor: Cbor): cbor is CborSimpleType & CborMethods & { readonly value: { readonly type: 'Float'; readonly value: number } } => {
   if (cbor.type !== MajorType.Simple) {
     return false;
   }
@@ -376,7 +390,7 @@ export const asNumber = (cbor: Cbor): CborNumber | undefined => {
  *
  * @param cbor - CBOR value
  * @returns Unsigned integer
- * @throws Error if not unsigned integer
+ * @throws {CborError} With type 'WrongType' if cbor is not an unsigned integer
  */
 export const expectUnsigned = (cbor: Cbor): number | bigint => {
   const value = asUnsigned(cbor);
@@ -391,7 +405,7 @@ export const expectUnsigned = (cbor: Cbor): number | bigint => {
  *
  * @param cbor - CBOR value
  * @returns Negative integer
- * @throws Error if not negative integer
+ * @throws {CborError} With type 'WrongType' if cbor is not a negative integer
  */
 export const expectNegative = (cbor: Cbor): number | bigint => {
   const value = asNegative(cbor);
@@ -406,7 +420,7 @@ export const expectNegative = (cbor: Cbor): number | bigint => {
  *
  * @param cbor - CBOR value
  * @returns Integer
- * @throws Error if not integer
+ * @throws {CborError} With type 'WrongType' if cbor is not an integer
  */
 export const expectInteger = (cbor: Cbor): number | bigint => {
   const value = asInteger(cbor);
@@ -421,7 +435,7 @@ export const expectInteger = (cbor: Cbor): number | bigint => {
  *
  * @param cbor - CBOR value
  * @returns Byte string
- * @throws Error if not byte string
+ * @throws {CborError} With type 'WrongType' if cbor is not a byte string
  */
 export const expectBytes = (cbor: Cbor): Uint8Array => {
   const value = asBytes(cbor);
@@ -436,7 +450,7 @@ export const expectBytes = (cbor: Cbor): Uint8Array => {
  *
  * @param cbor - CBOR value
  * @returns Text string
- * @throws Error if not text string
+ * @throws {CborError} With type 'WrongType' if cbor is not a text string
  */
 export const expectText = (cbor: Cbor): string => {
   const value = asText(cbor);
@@ -451,7 +465,7 @@ export const expectText = (cbor: Cbor): string => {
  *
  * @param cbor - CBOR value
  * @returns Array
- * @throws Error if not array
+ * @throws {CborError} With type 'WrongType' if cbor is not an array
  */
 export const expectArray = (cbor: Cbor): readonly Cbor[] => {
   const value = asArray(cbor);
@@ -466,7 +480,7 @@ export const expectArray = (cbor: Cbor): readonly Cbor[] => {
  *
  * @param cbor - CBOR value
  * @returns Map
- * @throws Error if not map
+ * @throws {CborError} With type 'WrongType' if cbor is not a map
  */
 export const expectMap = (cbor: Cbor): CborMap => {
   const value = asMap(cbor);
@@ -481,7 +495,7 @@ export const expectMap = (cbor: Cbor): CborMap => {
  *
  * @param cbor - CBOR value
  * @returns Boolean
- * @throws Error if not boolean
+ * @throws {CborError} With type 'WrongType' if cbor is not a boolean
  */
 export const expectBoolean = (cbor: Cbor): boolean => {
   const value = asBoolean(cbor);
@@ -496,7 +510,7 @@ export const expectBoolean = (cbor: Cbor): boolean => {
  *
  * @param cbor - CBOR value
  * @returns Float
- * @throws Error if not float
+ * @throws {CborError} With type 'WrongType' if cbor is not a float
  */
 export const expectFloat = (cbor: Cbor): number => {
   const value = asFloat(cbor);
@@ -511,7 +525,7 @@ export const expectFloat = (cbor: Cbor): number => {
  *
  * @param cbor - CBOR value
  * @returns Number
- * @throws Error if not number
+ * @throws {CborError} With type 'WrongType' if cbor is not a number
  */
 export const expectNumber = (cbor: Cbor): CborNumber => {
   const value = asNumber(cbor);
@@ -717,7 +731,7 @@ export const getTaggedContent = (cbor: Cbor, tag: number | bigint): Cbor | undef
  * @param cbor - CBOR value
  * @param tag - Expected tag value
  * @returns Tagged content
- * @throws Error if not tagged with expected tag
+ * @throws {CborError} With type 'WrongType' if cbor is not tagged with the expected tag
  */
 export const expectTaggedContent = (cbor: Cbor, tag: number | bigint): Cbor => {
   const content = getTaggedContent(cbor, tag);

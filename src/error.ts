@@ -240,9 +240,7 @@ export class CborError extends Error {
     this.errorType = errorType;
 
     // Maintains proper stack trace for where error was thrown (V8 only)
-    if (Error.captureStackTrace !== undefined) {
-      Error.captureStackTrace(this, CborError);
-    }
+    Error.captureStackTrace?.(this, CborError);
   }
 
   /**

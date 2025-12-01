@@ -379,7 +379,7 @@ export const countElements = (cbor: Cbor): number => {
   const result = walk<CountState>(
     cbor,
     { count: 0 },
-    (element, level, edge, state) => {
+    (_element, _level, _edge, state) => {
       return [{ count: state.count + 1 }, false];
     }
   );
@@ -411,7 +411,7 @@ export const collectAtLevel = (cbor: Cbor, targetLevel: number): Cbor[] => {
   const result = walk<CollectState>(
     cbor,
     { items: [] },
-    (element, level, edge, state) => {
+    (element, level, _edge, state) => {
       if (level === targetLevel && element.type === 'single') {
         return [
           { items: [...state.items, element.cbor] },
@@ -460,16 +460,19 @@ export const findFirst = (
 
   const result = walk<FindState>(
     cbor,
-    { found: undefined },
-    (element, level, edge, state) => {
+    {},
+    (element, _level, _edge, state) => {
       if (state.found !== undefined) {
         // Already found, stop descending
         return [state, true];
       }
 
       if (predicate(element)) {
-        const found = element.type === 'single' ? element.cbor : undefined;
-        return [{ found }, true]; // Stop after finding
+        if (element.type === 'single') {
+          return [{ found: element.cbor }, true]; // Stop after finding
+        }
+        // Matched but not a single element, stop anyway
+        return [state, true];
       }
 
       return [state, false];
@@ -505,7 +508,7 @@ export const collectAllText = (cbor: Cbor): string[] => {
   const result = walk<TextState>(
     cbor,
     { texts: [] },
-    (element, level, edge, state) => {
+    (element, _level, _edge, state) => {
       if (element.type === 'single' && element.cbor.type === MajorType.Text) {
         return [
           { texts: [...state.texts, element.cbor.value] },
@@ -542,7 +545,7 @@ export const maxDepth = (cbor: Cbor): number => {
   const result = walk<DepthState>(
     cbor,
     { maxDepth: 0 },
-    (element, level, edge, state) => {
+    (_element, level, _edge, state) => {
       const newMaxDepth = Math.max(state.maxDepth, level);
       return [{ maxDepth: newMaxDepth }, false];
     }

@@ -64,7 +64,7 @@ export const encodeVarInt = (value: CborNumber, majorType: MajorType): Uint8Arra
 
 export const decodeVarIntData = (dataView: DataView, offset: number): { majorType: MajorType, value: CborNumber, offset: number } => {
   const initialByte = dataView.getUint8(offset);
-  const majorType = initialByte >> 5;
+  const majorType = (initialByte >> 5) as MajorType;
   const additionalInfo = initialByte & 0x1f;
   let value: CborNumber;
   offset += 1;

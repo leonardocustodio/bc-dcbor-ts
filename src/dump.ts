@@ -291,13 +291,11 @@ function dumpItems(
       const noteComponents: string[] = [`tag(${tagValue})`];
 
       // Add tag name if tags store is provided
-      if (opts.tagsStore !== undefined) {
-        const numericTagValue = typeof tagValue === 'bigint' ? Number(tagValue) : tagValue;
-        const tag = createTag(numericTagValue);
-        const tagName = opts.tagsStore.assignedNameForTag(tag);
-        if (tagName !== undefined) {
-          noteComponents.push(tagName);
-        }
+      const numericTagValue = typeof tagValue === 'bigint' ? Number(tagValue) : tagValue;
+      const tag = createTag(numericTagValue);
+      const tagName = opts.tagsStore?.assignedNameForTag(tag);
+      if (tagName !== undefined) {
+        noteComponents.push(tagName);
       }
 
       const tagNote = noteComponents.join(' ');

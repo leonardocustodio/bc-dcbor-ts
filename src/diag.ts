@@ -377,11 +377,9 @@ function formatTagged(tag: number | bigint, content: Cbor, opts: DiagFormatOpts)
   // Check for summarizer first
   if (opts.summarize === true) {
     const store = resolveTagsStore(opts.tags);
-    if (store !== undefined) {
-      const summarizer = store.summarizer(tag);
-      if (summarizer !== undefined) {
-        return summarizer(content, opts.flat ?? false);
-      }
+    const summarizer = store?.summarizer(tag);
+    if (summarizer !== undefined) {
+      return summarizer(content, opts.flat ?? false);
     }
   }
 
@@ -389,12 +387,10 @@ function formatTagged(tag: number | bigint, content: Cbor, opts: DiagFormatOpts)
   let comment: string | undefined;
   if (opts.annotate === true) {
     const store = resolveTagsStore(opts.tags);
-    if (store !== undefined) {
-      const tagObj: Tag = { value: tag };
-      const assignedName = store.assignedNameForTag(tagObj);
-      if (assignedName !== undefined) {
-        comment = assignedName;
-      }
+    const tagObj: Tag = { value: tag };
+    const assignedName = store?.assignedNameForTag(tagObj);
+    if (assignedName !== undefined) {
+      comment = assignedName;
     }
   }
 

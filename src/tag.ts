@@ -34,10 +34,12 @@ export interface Tag {
  * const customTag = createTag(12345, 'myCustomTag');
  * ```
  */
-export const createTag = (value: CborNumber, name?: string): Tag => ({
-  value,
-  name
-});
+export const createTag = (value: CborNumber, name?: string): Tag => {
+  if (name !== undefined) {
+    return { value, name };
+  }
+  return { value };
+};
 
 /**
  * Get the string representation of a tag.

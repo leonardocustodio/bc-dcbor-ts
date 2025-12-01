@@ -14,7 +14,7 @@ export function decodeCbor(data: Uint8Array): Cbor {
 }
 
 function parseHeader(header: number): { majorType: MajorType, headerValue: number } {
-  const majorType = header >> 5;
+  const majorType = (header >> 5) as MajorType;
   const headerValue = header & 31;
   return { majorType, headerValue };
 }

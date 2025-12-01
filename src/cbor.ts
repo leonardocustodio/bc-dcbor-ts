@@ -18,16 +18,33 @@ import { CborError } from './error';
 
 export type { Simple };
 
-export enum MajorType {
-  Unsigned = 0,
-  Negative = 1,
-  ByteString = 2,
-  Text = 3,
-  Array = 4,
-  Map = 5,
-  Tagged = 6,
-  Simple = 7,
-}
+export const MajorType = {
+  Unsigned: 0,
+  Negative: 1,
+  ByteString: 2,
+  Text: 3,
+  Array: 4,
+  Map: 5,
+  Tagged: 6,
+  Simple: 7,
+} as const;
+
+// eslint-disable-next-line no-redeclare -- Intentionally using same name for value and type
+export type MajorType = typeof MajorType[keyof typeof MajorType];
+
+// Helper to get MajorType name from value (replaces enum reverse mapping)
+const MajorTypeNames: Record<MajorType, string> = {
+  [MajorType.Unsigned]: 'Unsigned',
+  [MajorType.Negative]: 'Negative',
+  [MajorType.ByteString]: 'ByteString',
+  [MajorType.Text]: 'Text',
+  [MajorType.Array]: 'Array',
+  [MajorType.Map]: 'Map',
+  [MajorType.Tagged]: 'Tagged',
+  [MajorType.Simple]: 'Simple',
+};
+
+const getMajorTypeName = (type: MajorType): string => MajorTypeNames[type];
 
 export type CborNumber = number | bigint;
 
@@ -59,14 +76,14 @@ export const isCbor = (value: unknown): value is Cbor => {
   return value !== null && typeof value === 'object' && 'isCbor' in value && value.isCbor === true;
 };
 
-export interface CborUnsignedType { readonly isCbor: true; readonly type: MajorType.Unsigned; readonly value: CborNumber }
-export interface CborNegativeType { readonly isCbor: true; readonly type: MajorType.Negative; readonly value: CborNumber }
-export interface CborByteStringType { readonly isCbor: true; readonly type: MajorType.ByteString; readonly value: Uint8Array }
-export interface CborTextType { readonly isCbor: true; readonly type: MajorType.Text; readonly value: string }
-export interface CborArrayType { readonly isCbor: true; readonly type: MajorType.Array; readonly value: readonly Cbor[] }
-export interface CborMapType { readonly isCbor: true; readonly type: MajorType.Map; readonly value: CborMap }
-export interface CborTaggedType { readonly isCbor: true; readonly type: MajorType.Tagged; readonly tag: CborNumber; readonly value: Cbor }
-export interface CborSimpleType { readonly isCbor: true; readonly type: MajorType.Simple; readonly value: Simple }
+export interface CborUnsignedType { readonly isCbor: true; readonly type: typeof MajorType.Unsigned; readonly value: CborNumber }
+export interface CborNegativeType { readonly isCbor: true; readonly type: typeof MajorType.Negative; readonly value: CborNumber }
+export interface CborByteStringType { readonly isCbor: true; readonly type: typeof MajorType.ByteString; readonly value: Uint8Array }
+export interface CborTextType { readonly isCbor: true; readonly type: typeof MajorType.Text; readonly value: string }
+export interface CborArrayType { readonly isCbor: true; readonly type: typeof MajorType.Array; readonly value: readonly Cbor[] }
+export interface CborMapType { readonly isCbor: true; readonly type: typeof MajorType.Map; readonly value: CborMap }
+export interface CborTaggedType { readonly isCbor: true; readonly type: typeof MajorType.Tagged; readonly tag: CborNumber; readonly value: Cbor }
+export interface CborSimpleType { readonly isCbor: true; readonly type: typeof MajorType.Simple; readonly value: Simple }
 
 // Instance methods interface
 export interface CborMethods {
@@ -109,20 +126,74 @@ export interface CborMethods {
   asSimpleValue(): Simple | undefined;
 
   // Throwing conversion (throws on mismatch)
+  /**
+   * Convert to byte string, throwing if type doesn't match.
+   * @throws {TypeError} If value is not a byte string type
+   */
   toByteString(): Uint8Array;
+  /**
+   * Convert to text string, throwing if type doesn't match.
+   * @throws {TypeError} If value is not a text string type
+   */
   toText(): string;
+  /**
+   * Convert to array, throwing if type doesn't match.
+   * @throws {TypeError} If value is not an array type
+   */
   toArray(): readonly Cbor[];
+  /**
+   * Convert to map, throwing if type doesn't match.
+   * @throws {TypeError} If value is not a map type
+   */
   toMap(): CborMap;
+  /**
+   * Convert to tagged value, throwing if type doesn't match.
+   * @throws {TypeError} If value is not a tagged type
+   */
   toTagged(): [Tag, Cbor];
+  /**
+   * Convert to boolean, throwing if type doesn't match.
+   * @throws {TypeError} If value is not a boolean (True/False) type
+   */
   toBool(): boolean;
+  /**
+   * Convert to integer, throwing if type doesn't match.
+   * @throws {TypeError} If value is not an integer (Unsigned or Negative) type
+   */
   toInteger(): number | bigint;
+  /**
+   * Convert to number, throwing if type doesn't match.
+   * @throws {TypeError} If value is not a numeric (Unsigned, Negative, or Float) type
+   */
   toNumber(): number | bigint;
+  /**
+   * Convert to simple value, throwing if type doesn't match.
+   * @throws {TypeError} If value is not a simple type
+   */
   toSimpleValue(): Simple;
+  /**
+   * Expect specific tag and return content, throwing if tag doesn't match.
+   * @param tag - Expected tag value
+   * @throws {CborError} With type 'WrongType' if value is not tagged, or 'Custom' if tag doesn't match
+   */
   expectTag(tag: CborNumber | Tag): Cbor;
 
   // Advanced operations
+  /**
+   * Walk the CBOR structure with a visitor function.
+   * @param initialState - Initial state for the visitor
+   * @param visitor - Visitor function called for each element
+   */
   walk<State>(initialState: State, visitor: Visitor<State>): State;
+  /**
+   * Validate that value has one of the expected tags.
+   * @param expectedTags - Array of expected tag values
+   * @throws {CborError} With type 'WrongType' if value is not tagged, or 'Custom' if tag doesn't match any expected value
+   */
   validateTag(expectedTags: Tag[]): Tag;
+  /**
+   * Remove one level of tagging, returning the inner content.
+   */
   untagged(): Cbor;
 }
 
@@ -519,31 +590,31 @@ export const attachMethods = <T extends Omit<Cbor, keyof CborMethods>>(obj: T): 
     // Throwing conversion (throws on mismatch)
     toByteString(this: Cbor): Uint8Array {
       if (this.type !== MajorType.ByteString) {
-        throw new TypeError(`Cannot convert CBOR to ByteString: expected ByteString type, got ${MajorType[this.type]}`);
+        throw new TypeError(`Cannot convert CBOR to ByteString: expected ByteString type, got ${getMajorTypeName(this.type)}`);
       }
       return this.value;
     },
     toText(this: Cbor): string {
       if (this.type !== MajorType.Text) {
-        throw new TypeError(`Cannot convert CBOR to Text: expected Text type, got ${MajorType[this.type]}`);
+        throw new TypeError(`Cannot convert CBOR to Text: expected Text type, got ${getMajorTypeName(this.type)}`);
       }
       return this.value;
     },
     toArray(this: Cbor): readonly Cbor[] {
       if (this.type !== MajorType.Array) {
-        throw new TypeError(`Cannot convert CBOR to Array: expected Array type, got ${MajorType[this.type]}`);
+        throw new TypeError(`Cannot convert CBOR to Array: expected Array type, got ${getMajorTypeName(this.type)}`);
       }
       return this.value;
     },
     toMap(this: Cbor): CborMap {
       if (this.type !== MajorType.Map) {
-        throw new TypeError(`Cannot convert CBOR to Map: expected Map type, got ${MajorType[this.type]}`);
+        throw new TypeError(`Cannot convert CBOR to Map: expected Map type, got ${getMajorTypeName(this.type)}`);
       }
       return this.value;
     },
     toTagged(this: Cbor): [Tag, Cbor] {
       if (this.type !== MajorType.Tagged) {
-        throw new TypeError(`Cannot convert CBOR to Tagged: expected Tagged type, got ${MajorType[this.type]}`);
+        throw new TypeError(`Cannot convert CBOR to Tagged: expected Tagged type, got ${getMajorTypeName(this.type)}`);
       }
       const tag: Tag = { value: this.tag, name: `tag-${this.tag}` };
       return [tag, this.value];
@@ -551,27 +622,27 @@ export const attachMethods = <T extends Omit<Cbor, keyof CborMethods>>(obj: T): 
     toBool(this: Cbor): boolean {
       const result = this.asBool();
       if (result === undefined) {
-        throw new TypeError(`Cannot convert CBOR to boolean: expected Simple(True/False) type, got ${MajorType[this.type]}`);
+        throw new TypeError(`Cannot convert CBOR to boolean: expected Simple(True/False) type, got ${getMajorTypeName(this.type)}`);
       }
       return result;
     },
     toInteger(this: Cbor): number | bigint {
       const result = this.asInteger();
       if (result === undefined) {
-        throw new TypeError(`Cannot convert CBOR to integer: expected Unsigned or Negative type, got ${MajorType[this.type]}`);
+        throw new TypeError(`Cannot convert CBOR to integer: expected Unsigned or Negative type, got ${getMajorTypeName(this.type)}`);
       }
       return result;
     },
     toNumber(this: Cbor): number | bigint {
       const result = this.asNumber();
       if (result === undefined) {
-        throw new TypeError(`Cannot convert CBOR to number: expected Unsigned, Negative, or Float type, got ${MajorType[this.type]}`);
+        throw new TypeError(`Cannot convert CBOR to number: expected Unsigned, Negative, or Float type, got ${getMajorTypeName(this.type)}`);
       }
       return result;
     },
     toSimpleValue(this: Cbor): Simple {
       if (this.type !== MajorType.Simple) {
-        throw new TypeError(`Cannot convert CBOR to Simple: expected Simple type, got ${MajorType[this.type]}`);
+        throw new TypeError(`Cannot convert CBOR to Simple: expected Simple type, got ${getMajorTypeName(this.type)}`);
       }
       return this.value;
     },
