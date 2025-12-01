@@ -270,7 +270,7 @@ export const cbor = (value: CborInput): Cbor => {
     // This ensures deterministic encoding regardless of how the string was composed
     const normalized = value.normalize('NFC');
     result = { isCbor: true, type: MajorType.Text, value: normalized };
-  } else if (value === null) {
+  } else if (value === null || value === undefined) {
     result = { isCbor: true, type: MajorType.Simple, value: { type: 'Null' } };
   } else if (value === true) {
     result = { isCbor: true, type: MajorType.Simple, value: { type: 'True' } };
