@@ -179,6 +179,7 @@ describe('CborError', () => {
   describe('Error handling in encoding', () => {
     test('throws CborError for unsupported type', () => {
       // Symbol is not supported by CborInput
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const unsupported = Symbol('test') as any;
 
       expect(() => {
@@ -199,6 +200,7 @@ describe('CborError', () => {
       const func = () => 'test';
 
       expect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         cbor(func as any);
       }).toThrow(CborError);
     });
@@ -356,9 +358,12 @@ describe('CborError', () => {
     test('decoding errors preserve error information', () => {
       const invalidCbor = new Uint8Array([0xFF]); // Invalid header
 
+      expect(() => {
+        decodeCbor(invalidCbor);
+      }).toThrow(CborError);
+
       try {
         decodeCbor(invalidCbor);
-        fail('Should have thrown an error');
       } catch (e) {
         expect(CborError.isCborError(e)).toBe(true);
         if (CborError.isCborError(e)) {
@@ -394,11 +399,13 @@ describe('CborError', () => {
 
       // Symbol should fail (not a valid CBOR type)
       expect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         cbor(Symbol('test') as any);
       }).toThrow(CborError);
 
       // Function should fail
       expect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         cbor((() => {}) as any);
       }).toThrow(CborError);
 
