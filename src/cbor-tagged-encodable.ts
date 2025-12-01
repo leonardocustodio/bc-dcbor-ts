@@ -117,7 +117,7 @@ export interface CBORTaggedEncodable extends CBORTagged {
  * @param encodable - Object implementing CBORTaggedEncodable
  * @returns Tagged CBOR value
  */
-export function createTaggedCbor(encodable: CBORTaggedEncodable): Cbor {
+export const createTaggedCbor = (encodable: CBORTaggedEncodable): Cbor => {
   const tags = encodable.cborTags();
   if (tags.length === 0) {
     throw new CborError({ type: 'Custom', message: 'No tags defined for this type' });
@@ -135,4 +135,4 @@ export function createTaggedCbor(encodable: CBORTaggedEncodable): Cbor {
     tag: tag.value,
     value: untagged
   });
-}
+};

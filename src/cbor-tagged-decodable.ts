@@ -149,7 +149,7 @@ export interface CBORTaggedDecodable<T> extends CBORTagged {
  * @returns The matching tag
  * @throws Error if the value is not tagged or has an unexpected tag
  */
-export function validateTag(cbor: Cbor, expectedTags: Tag[]): Tag {
+export const validateTag = (cbor: Cbor, expectedTags: Tag[]): Tag => {
   if (cbor.type !== MajorType.Tagged) {
     throw new CborError({ type: 'WrongType' });
   }
@@ -164,7 +164,7 @@ export function validateTag(cbor: Cbor, expectedTags: Tag[]): Tag {
   }
 
   return matchingTag;
-}
+};
 
 /**
  * Helper function to extract the content from a tagged CBOR value.
@@ -173,9 +173,9 @@ export function validateTag(cbor: Cbor, expectedTags: Tag[]): Tag {
  * @returns The untagged content
  * @throws Error if the value is not tagged
  */
-export function extractTaggedContent(cbor: Cbor): Cbor {
+export const extractTaggedContent = (cbor: Cbor): Cbor => {
   if (cbor.type !== MajorType.Tagged) {
     throw new CborError({ type: 'WrongType' });
   }
   return cbor.value;
-}
+};

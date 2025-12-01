@@ -62,5 +62,5 @@ export type { WalkElement, EdgeTypeVariant, Visitor } from './walk';
 
 // Error handling
 export type { Error, Result } from './error';
-export { Ok, Err, errorMsg, errorToString, throwError } from './error';
+export { Ok, Err, errorMsg, errorToString, CborError } from './error';
 

@@ -32,7 +32,10 @@ import { extractCbor } from './conveniences';
 import { CborError } from './error';
 
 type MapKey = Uint8Array;
-export interface MapEntry { key: Cbor; value: Cbor }
+export interface MapEntry {
+  readonly key: Cbor;
+  readonly value: Cbor;
+}
 
 /**
  * A deterministic CBOR map implementation.

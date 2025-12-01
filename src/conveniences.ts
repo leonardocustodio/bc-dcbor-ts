@@ -21,7 +21,7 @@ import { CborError } from './error';
  * Extract native JavaScript value from CBOR.
  * Converts CBOR types to their JavaScript equivalents.
  */
-export function extractCbor(cbor: Cbor | Uint8Array): unknown {
+export const extractCbor = (cbor: Cbor | Uint8Array): unknown => {
   let c: Cbor;
   if (cbor instanceof Uint8Array) {
     c = decodeCbor(cbor);
@@ -55,7 +55,7 @@ export function extractCbor(cbor: Cbor | Uint8Array): unknown {
       return c;
   }
   return undefined;
-}
+};
 
 // ============================================================================
 // Type Guards
@@ -74,9 +74,9 @@ export function extractCbor(cbor: Cbor | Uint8Array): unknown {
  * }
  * ```
  */
-export function isUnsigned(cbor: Cbor): boolean {
+export const isUnsigned = (cbor: Cbor): boolean => {
   return cbor.type === MajorType.Unsigned;
-}
+};
 
 /**
  * Check if CBOR value is a negative integer.
@@ -84,9 +84,9 @@ export function isUnsigned(cbor: Cbor): boolean {
  * @param cbor - CBOR value to check
  * @returns True if value is negative integer
  */
-export function isNegative(cbor: Cbor): boolean {
+export const isNegative = (cbor: Cbor): boolean => {
   return cbor.type === MajorType.Negative;
-}
+};
 
 /**
  * Check if CBOR value is any integer (unsigned or negative).
@@ -94,9 +94,9 @@ export function isNegative(cbor: Cbor): boolean {
  * @param cbor - CBOR value to check
  * @returns True if value is an integer
  */
-export function isInteger(cbor: Cbor): boolean {
+export const isInteger = (cbor: Cbor): boolean => {
   return cbor.type === MajorType.Unsigned || cbor.type === MajorType.Negative;
-}
+};
 
 /**
  * Check if CBOR value is a byte string.
@@ -104,9 +104,9 @@ export function isInteger(cbor: Cbor): boolean {
  * @param cbor - CBOR value to check
  * @returns True if value is byte string
  */
-export function isBytes(cbor: Cbor): boolean {
+export const isBytes = (cbor: Cbor): boolean => {
   return cbor.type === MajorType.ByteString;
-}
+};
 
 /**
  * Check if CBOR value is a text string.
@@ -114,9 +114,9 @@ export function isBytes(cbor: Cbor): boolean {
  * @param cbor - CBOR value to check
  * @returns True if value is text string
  */
-export function isText(cbor: Cbor): boolean {
+export const isText = (cbor: Cbor): boolean => {
   return cbor.type === MajorType.Text;
-}
+};
 
 /**
  * Check if CBOR value is an array.
@@ -124,9 +124,9 @@ export function isText(cbor: Cbor): boolean {
  * @param cbor - CBOR value to check
  * @returns True if value is array
  */
-export function isArray(cbor: Cbor): boolean {
+export const isArray = (cbor: Cbor): boolean => {
   return cbor.type === MajorType.Array;
-}
+};
 
 /**
  * Check if CBOR value is a map.
@@ -134,9 +134,9 @@ export function isArray(cbor: Cbor): boolean {
  * @param cbor - CBOR value to check
  * @returns True if value is map
  */
-export function isMap(cbor: Cbor): boolean {
+export const isMap = (cbor: Cbor): boolean => {
   return cbor.type === MajorType.Map;
-}
+};
 
 /**
  * Check if CBOR value is tagged.
@@ -144,9 +144,9 @@ export function isMap(cbor: Cbor): boolean {
  * @param cbor - CBOR value to check
  * @returns True if value is tagged
  */
-export function isTagged(cbor: Cbor): boolean {
+export const isTagged = (cbor: Cbor): boolean => {
   return cbor.type === MajorType.Tagged;
-}
+};
 
 /**
  * Check if CBOR value is a simple value.
@@ -154,9 +154,9 @@ export function isTagged(cbor: Cbor): boolean {
  * @param cbor - CBOR value to check
  * @returns True if value is simple
  */
-export function isSimple(cbor: Cbor): boolean {
+export const isSimple = (cbor: Cbor): boolean => {
   return cbor.type === MajorType.Simple;
-}
+};
 
 /**
  * Check if CBOR value is a boolean (true or false).
@@ -164,12 +164,12 @@ export function isSimple(cbor: Cbor): boolean {
  * @param cbor - CBOR value to check
  * @returns True if value is boolean
  */
-export function isBoolean(cbor: Cbor): boolean {
+export const isBoolean = (cbor: Cbor): boolean => {
   if (cbor.type !== MajorType.Simple) {
     return false;
   }
   return cbor.value.type === 'False' || cbor.value.type === 'True';
-}
+};
 
 /**
  * Check if CBOR value is null.
@@ -177,12 +177,12 @@ export function isBoolean(cbor: Cbor): boolean {
  * @param cbor - CBOR value to check
  * @returns True if value is null
  */
-export function isNull(cbor: Cbor): boolean {
+export const isNull = (cbor: Cbor): boolean => {
   if (cbor.type !== MajorType.Simple) {
     return false;
   }
   return cbor.value.type === 'Null';
-}
+};
 
 /**
  * Check if CBOR value is a float (f16, f32, or f64).
@@ -190,12 +190,12 @@ export function isNull(cbor: Cbor): boolean {
  * @param cbor - CBOR value to check
  * @returns True if value is float
  */
-export function isFloat(cbor: Cbor): boolean {
+export const isFloat = (cbor: Cbor): boolean => {
   if (cbor.type !== MajorType.Simple) {
     return false;
   }
   return isSimpleFloat(cbor.value);
-}
+};
 
 // ============================================================================
 // Safe Extraction (returns undefined on type mismatch)
@@ -207,12 +207,12 @@ export function isFloat(cbor: Cbor): boolean {
  * @param cbor - CBOR value
  * @returns Unsigned integer or undefined
  */
-export function asUnsigned(cbor: Cbor): number | bigint | undefined {
+export const asUnsigned = (cbor: Cbor): number | bigint | undefined => {
   if (cbor.type === MajorType.Unsigned) {
     return cbor.value;
   }
   return undefined;
-}
+};
 
 /**
  * Extract negative integer value if type matches.
@@ -220,7 +220,7 @@ export function asUnsigned(cbor: Cbor): number | bigint | undefined {
  * @param cbor - CBOR value
  * @returns Negative integer or undefined
  */
-export function asNegative(cbor: Cbor): number | bigint | undefined {
+export const asNegative = (cbor: Cbor): number | bigint | undefined => {
   if (cbor.type === MajorType.Negative) {
     // Convert stored magnitude back to actual negative value
     if (typeof cbor.value === 'bigint') {
@@ -230,7 +230,7 @@ export function asNegative(cbor: Cbor): number | bigint | undefined {
     }
   }
   return undefined;
-}
+};
 
 /**
  * Extract any integer value (unsigned or negative) if type matches.
@@ -238,7 +238,7 @@ export function asNegative(cbor: Cbor): number | bigint | undefined {
  * @param cbor - CBOR value
  * @returns Integer or undefined
  */
-export function asInteger(cbor: Cbor): number | bigint | undefined {
+export const asInteger = (cbor: Cbor): number | bigint | undefined => {
   if (cbor.type === MajorType.Unsigned) {
     return cbor.value;
   } else if (cbor.type === MajorType.Negative) {
@@ -250,7 +250,7 @@ export function asInteger(cbor: Cbor): number | bigint | undefined {
     }
   }
   return undefined;
-}
+};
 
 /**
  * Extract byte string value if type matches.
@@ -258,12 +258,12 @@ export function asInteger(cbor: Cbor): number | bigint | undefined {
  * @param cbor - CBOR value
  * @returns Byte string or undefined
  */
-export function asBytes(cbor: Cbor): Uint8Array | undefined {
+export const asBytes = (cbor: Cbor): Uint8Array | undefined => {
   if (cbor.type === MajorType.ByteString) {
     return cbor.value;
   }
   return undefined;
-}
+};
 
 /**
  * Extract text string value if type matches.
@@ -271,12 +271,12 @@ export function asBytes(cbor: Cbor): Uint8Array | undefined {
  * @param cbor - CBOR value
  * @returns Text string or undefined
  */
-export function asText(cbor: Cbor): string | undefined {
+export const asText = (cbor: Cbor): string | undefined => {
   if (cbor.type === MajorType.Text) {
     return cbor.value;
   }
   return undefined;
-}
+};
 
 /**
  * Extract array value if type matches.
@@ -284,12 +284,12 @@ export function asText(cbor: Cbor): string | undefined {
  * @param cbor - CBOR value
  * @returns Array or undefined
  */
-export function asArray(cbor: Cbor): Cbor[] | undefined {
+export const asArray = (cbor: Cbor): Cbor[] | undefined => {
   if (cbor.type === MajorType.Array) {
     return cbor.value;
   }
   return undefined;
-}
+};
 
 /**
  * Extract map value if type matches.
@@ -297,12 +297,12 @@ export function asArray(cbor: Cbor): Cbor[] | undefined {
  * @param cbor - CBOR value
  * @returns Map or undefined
  */
-export function asMap(cbor: Cbor): CborMap | undefined {
+export const asMap = (cbor: Cbor): CborMap | undefined => {
   if (cbor.type === MajorType.Map) {
     return cbor.value;
   }
   return undefined;
-}
+};
 
 /**
  * Extract boolean value if type matches.
@@ -310,7 +310,7 @@ export function asMap(cbor: Cbor): CborMap | undefined {
  * @param cbor - CBOR value
  * @returns Boolean or undefined
  */
-export function asBoolean(cbor: Cbor): boolean | undefined {
+export const asBoolean = (cbor: Cbor): boolean | undefined => {
   if (cbor.type !== MajorType.Simple) {
     return undefined;
   }
@@ -321,7 +321,7 @@ export function asBoolean(cbor: Cbor): boolean | undefined {
     return false;
   }
   return undefined;
-}
+};
 
 /**
  * Extract float value if type matches.
@@ -329,7 +329,7 @@ export function asBoolean(cbor: Cbor): boolean | undefined {
  * @param cbor - CBOR value
  * @returns Float or undefined
  */
-export function asFloat(cbor: Cbor): number | undefined {
+export const asFloat = (cbor: Cbor): number | undefined => {
   if (cbor.type !== MajorType.Simple) {
     return undefined;
   }
@@ -338,7 +338,7 @@ export function asFloat(cbor: Cbor): number | undefined {
     return simple.value;
   }
   return undefined;
-}
+};
 
 /**
  * Extract any numeric value (integer or float).
@@ -346,7 +346,7 @@ export function asFloat(cbor: Cbor): number | undefined {
  * @param cbor - CBOR value
  * @returns Number or undefined
  */
-export function asNumber(cbor: Cbor): CborNumber | undefined {
+export const asNumber = (cbor: Cbor): CborNumber | undefined => {
   if (cbor.type === MajorType.Unsigned) {
     return cbor.value;
   }
@@ -365,7 +365,7 @@ export function asNumber(cbor: Cbor): CborNumber | undefined {
     }
   }
   return undefined;
-}
+};
 
 // ============================================================================
 // Expectations (throw on type mismatch)
@@ -378,13 +378,13 @@ export function asNumber(cbor: Cbor): CborNumber | undefined {
  * @returns Unsigned integer
  * @throws Error if not unsigned integer
  */
-export function expectUnsigned(cbor: Cbor): number | bigint {
+export const expectUnsigned = (cbor: Cbor): number | bigint => {
   const value = asUnsigned(cbor);
   if (value === undefined) {
     throw new CborError({ type: 'WrongType' });
   }
   return value;
-}
+};
 
 /**
  * Extract negative integer value, throwing if type doesn't match.
@@ -393,13 +393,13 @@ export function expectUnsigned(cbor: Cbor): number | bigint {
  * @returns Negative integer
  * @throws Error if not negative integer
  */
-export function expectNegative(cbor: Cbor): number | bigint {
+export const expectNegative = (cbor: Cbor): number | bigint => {
   const value = asNegative(cbor);
   if (value === undefined) {
     throw new CborError({ type: 'WrongType' });
   }
   return value;
-}
+};
 
 /**
  * Extract any integer value, throwing if type doesn't match.
@@ -408,13 +408,13 @@ export function expectNegative(cbor: Cbor): number | bigint {
  * @returns Integer
  * @throws Error if not integer
  */
-export function expectInteger(cbor: Cbor): number | bigint {
+export const expectInteger = (cbor: Cbor): number | bigint => {
   const value = asInteger(cbor);
   if (value === undefined) {
     throw new CborError({ type: 'WrongType' });
   }
   return value;
-}
+};
 
 /**
  * Extract byte string value, throwing if type doesn't match.
@@ -423,13 +423,13 @@ export function expectInteger(cbor: Cbor): number | bigint {
  * @returns Byte string
  * @throws Error if not byte string
  */
-export function expectBytes(cbor: Cbor): Uint8Array {
+export const expectBytes = (cbor: Cbor): Uint8Array => {
   const value = asBytes(cbor);
   if (value === undefined) {
     throw new CborError({ type: 'WrongType' });
   }
   return value;
-}
+};
 
 /**
  * Extract text string value, throwing if type doesn't match.
@@ -438,13 +438,13 @@ export function expectBytes(cbor: Cbor): Uint8Array {
  * @returns Text string
  * @throws Error if not text string
  */
-export function expectText(cbor: Cbor): string {
+export const expectText = (cbor: Cbor): string => {
   const value = asText(cbor);
   if (value === undefined) {
     throw new CborError({ type: 'WrongType' });
   }
   return value;
-}
+};
 
 /**
  * Extract array value, throwing if type doesn't match.
@@ -453,13 +453,13 @@ export function expectText(cbor: Cbor): string {
  * @returns Array
  * @throws Error if not array
  */
-export function expectArray(cbor: Cbor): Cbor[] {
+export const expectArray = (cbor: Cbor): Cbor[] => {
   const value = asArray(cbor);
   if (value === undefined) {
     throw new CborError({ type: 'WrongType' });
   }
   return value;
-}
+};
 
 /**
  * Extract map value, throwing if type doesn't match.
@@ -468,13 +468,13 @@ export function expectArray(cbor: Cbor): Cbor[] {
  * @returns Map
  * @throws Error if not map
  */
-export function expectMap(cbor: Cbor): CborMap {
+export const expectMap = (cbor: Cbor): CborMap => {
   const value = asMap(cbor);
   if (value === undefined) {
     throw new CborError({ type: 'WrongType' });
   }
   return value;
-}
+};
 
 /**
  * Extract boolean value, throwing if type doesn't match.
@@ -483,13 +483,13 @@ export function expectMap(cbor: Cbor): CborMap {
  * @returns Boolean
  * @throws Error if not boolean
  */
-export function expectBoolean(cbor: Cbor): boolean {
+export const expectBoolean = (cbor: Cbor): boolean => {
   const value = asBoolean(cbor);
   if (value === undefined) {
     throw new CborError({ type: 'WrongType' });
   }
   return value;
-}
+};
 
 /**
  * Extract float value, throwing if type doesn't match.
@@ -498,13 +498,13 @@ export function expectBoolean(cbor: Cbor): boolean {
  * @returns Float
  * @throws Error if not float
  */
-export function expectFloat(cbor: Cbor): number {
+export const expectFloat = (cbor: Cbor): number => {
   const value = asFloat(cbor);
   if (value === undefined) {
     throw new CborError({ type: 'WrongType' });
   }
   return value;
-}
+};
 
 /**
  * Extract any numeric value, throwing if type doesn't match.
@@ -513,13 +513,13 @@ export function expectFloat(cbor: Cbor): number {
  * @returns Number
  * @throws Error if not number
  */
-export function expectNumber(cbor: Cbor): CborNumber {
+export const expectNumber = (cbor: Cbor): CborNumber => {
   const value = asNumber(cbor);
   if (value === undefined) {
     throw new CborError({ type: 'WrongType' });
   }
   return value;
-}
+};
 
 // ============================================================================
 // Array Operations
@@ -532,7 +532,7 @@ export function expectNumber(cbor: Cbor): CborNumber {
  * @param index - Array index
  * @returns Item at index or undefined
  */
-export function arrayItem(cbor: Cbor, index: number): Cbor | undefined {
+export const arrayItem = (cbor: Cbor, index: number): Cbor | undefined => {
   if (cbor.type !== MajorType.Array) {
     return undefined;
   }
@@ -541,7 +541,7 @@ export function arrayItem(cbor: Cbor, index: number): Cbor | undefined {
     return undefined;
   }
   return array[index];
-}
+};
 
 /**
  * Get array length.
@@ -549,12 +549,12 @@ export function arrayItem(cbor: Cbor, index: number): Cbor | undefined {
  * @param cbor - CBOR value (must be array)
  * @returns Array length or undefined
  */
-export function arrayLength(cbor: Cbor): number | undefined {
+export const arrayLength = (cbor: Cbor): number | undefined => {
   if (cbor.type !== MajorType.Array) {
     return undefined;
   }
   return cbor.value.length;
-}
+};
 
 /**
  * Check if array is empty.
@@ -562,12 +562,12 @@ export function arrayLength(cbor: Cbor): number | undefined {
  * @param cbor - CBOR value (must be array)
  * @returns True if empty, false if not empty, undefined if not array
  */
-export function arrayIsEmpty(cbor: Cbor): boolean | undefined {
+export const arrayIsEmpty = (cbor: Cbor): boolean | undefined => {
   if (cbor.type !== MajorType.Array) {
     return undefined;
   }
   return cbor.value.length === 0;
-}
+};
 
 // ============================================================================
 // Map Operations
@@ -607,12 +607,12 @@ export function mapHas<K extends CborEncodable>(cbor: Cbor, key: K): boolean | u
  * @param cbor - CBOR value (must be map)
  * @returns Array of keys or undefined
  */
-export function mapKeys(cbor: Cbor): Cbor[] | undefined {
+export const mapKeys = (cbor: Cbor): Cbor[] | undefined => {
   if (cbor.type !== MajorType.Map) {
     return undefined;
   }
   return cbor.value.entries.map(e => e.key);
-}
+};
 
 /**
  * Get all map values.
@@ -620,12 +620,12 @@ export function mapKeys(cbor: Cbor): Cbor[] | undefined {
  * @param cbor - CBOR value (must be map)
  * @returns Array of values or undefined
  */
-export function mapValues(cbor: Cbor): Cbor[] | undefined {
+export const mapValues = (cbor: Cbor): Cbor[] | undefined => {
   if (cbor.type !== MajorType.Map) {
     return undefined;
   }
   return cbor.value.entries.map(e => e.value);
-}
+};
 
 /**
  * Get map size.
@@ -633,12 +633,12 @@ export function mapValues(cbor: Cbor): Cbor[] | undefined {
  * @param cbor - CBOR value (must be map)
  * @returns Map size or undefined
  */
-export function mapSize(cbor: Cbor): number | undefined {
+export const mapSize = (cbor: Cbor): number | undefined => {
   if (cbor.type !== MajorType.Map) {
     return undefined;
   }
   return cbor.value.size;
-}
+};
 
 /**
  * Check if map is empty.
@@ -646,12 +646,12 @@ export function mapSize(cbor: Cbor): number | undefined {
  * @param cbor - CBOR value (must be map)
  * @returns True if empty, false if not empty, undefined if not map
  */
-export function mapIsEmpty(cbor: Cbor): boolean | undefined {
+export const mapIsEmpty = (cbor: Cbor): boolean | undefined => {
   if (cbor.type !== MajorType.Map) {
     return undefined;
   }
   return cbor.value.size === 0;
-}
+};
 
 // ============================================================================
 // Tagged Value Operations
@@ -663,12 +663,12 @@ export function mapIsEmpty(cbor: Cbor): boolean | undefined {
  * @param cbor - CBOR value (must be tagged)
  * @returns Tag value or undefined
  */
-export function tagValue(cbor: Cbor): number | bigint | undefined {
+export const tagValue = (cbor: Cbor): number | bigint | undefined => {
   if (cbor.type !== MajorType.Tagged) {
     return undefined;
   }
   return cbor.tag;
-}
+};
 
 /**
  * Get content from tagged CBOR.
@@ -676,12 +676,12 @@ export function tagValue(cbor: Cbor): number | bigint | undefined {
  * @param cbor - CBOR value (must be tagged)
  * @returns Tagged content or undefined
  */
-export function tagContent(cbor: Cbor): Cbor | undefined {
+export const tagContent = (cbor: Cbor): Cbor | undefined => {
   if (cbor.type !== MajorType.Tagged) {
     return undefined;
   }
   return cbor.value;
-}
+};
 
 /**
  * Check if CBOR has a specific tag.
@@ -690,12 +690,12 @@ export function tagContent(cbor: Cbor): Cbor | undefined {
  * @param tag - Tag value to check
  * @returns True if has tag, false otherwise
  */
-export function hasTag(cbor: Cbor, tag: number | bigint): boolean {
+export const hasTag = (cbor: Cbor, tag: number | bigint): boolean => {
   if (cbor.type !== MajorType.Tagged) {
     return false;
   }
   return cbor.tag === tag;
-}
+};
 
 /**
  * Extract content if has specific tag.
@@ -704,12 +704,12 @@ export function hasTag(cbor: Cbor, tag: number | bigint): boolean {
  * @param tag - Expected tag value
  * @returns Tagged content or undefined
  */
-export function getTaggedContent(cbor: Cbor, tag: number | bigint): Cbor | undefined {
+export const getTaggedContent = (cbor: Cbor, tag: number | bigint): Cbor | undefined => {
   if (cbor.type === MajorType.Tagged && cbor.tag === tag) {
     return cbor.value;
   }
   return undefined;
-}
+};
 
 /**
  * Extract content if has specific tag, throwing if not.
@@ -719,10 +719,10 @@ export function getTaggedContent(cbor: Cbor, tag: number | bigint): Cbor | undef
  * @returns Tagged content
  * @throws Error if not tagged with expected tag
  */
-export function expectTaggedContent(cbor: Cbor, tag: number | bigint): Cbor {
+export const expectTaggedContent = (cbor: Cbor, tag: number | bigint): Cbor => {
   const content = getTaggedContent(cbor, tag);
   if (content === undefined) {
     throw new CborError({ type: 'WrongType' });
   }
   return content;
-}
+};

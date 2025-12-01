@@ -51,22 +51,22 @@ export type CborEncodable =
   | Set<unknown>
   | Record<string, unknown>;
 
-export function isCborNumber(value: unknown): value is CborNumber {
+export const isCborNumber = (value: unknown): value is CborNumber => {
   return typeof value === 'number' || typeof value === 'bigint';
-}
+};
 
-export function isCbor(value: unknown): value is Cbor {
+export const isCbor = (value: unknown): value is Cbor => {
   return value !== null && typeof value === 'object' && 'isCbor' in value && value.isCbor === true;
-}
+};
 
-export interface CborUnsignedType { isCbor: true; type: MajorType.Unsigned; value: CborNumber }
-export interface CborNegativeType { isCbor: true; type: MajorType.Negative; value: CborNumber }
-export interface CborByteStringType { isCbor: true; type: MajorType.ByteString; value: Uint8Array }
-export interface CborTextType { isCbor: true; type: MajorType.Text; value: string }
-export interface CborArrayType { isCbor: true; type: MajorType.Array; value: Cbor[] }
-export interface CborMapType { isCbor: true; type: MajorType.Map; value: CborMap }
-export interface CborTaggedType { isCbor: true; type: MajorType.Tagged; tag: CborNumber; value: Cbor }
-export interface CborSimpleType { isCbor: true; type: MajorType.Simple; value: Simple }
+export interface CborUnsignedType { readonly isCbor: true; readonly type: MajorType.Unsigned; readonly value: CborNumber }
+export interface CborNegativeType { readonly isCbor: true; readonly type: MajorType.Negative; readonly value: CborNumber }
+export interface CborByteStringType { readonly isCbor: true; readonly type: MajorType.ByteString; readonly value: Uint8Array }
+export interface CborTextType { readonly isCbor: true; readonly type: MajorType.Text; readonly value: string }
+export interface CborArrayType { readonly isCbor: true; readonly type: MajorType.Array; readonly value: readonly Cbor[] }
+export interface CborMapType { readonly isCbor: true; readonly type: MajorType.Map; readonly value: CborMap }
+export interface CborTaggedType { readonly isCbor: true; readonly type: MajorType.Tagged; readonly tag: CborNumber; readonly value: Cbor }
+export interface CborSimpleType { readonly isCbor: true; readonly type: MajorType.Simple; readonly value: Simple }
 
 // Instance methods interface
 export interface CborMethods {
@@ -100,7 +100,7 @@ export interface CborMethods {
   // Safe conversion (returns undefined on mismatch)
   asByteString(): Uint8Array | undefined;
   asText(): string | undefined;
-  asArray(): Cbor[] | undefined;
+  asArray(): readonly Cbor[] | undefined;
   asMap(): CborMap | undefined;
   asTagged(): [Tag, Cbor] | undefined;
   asBool(): boolean | undefined;
@@ -111,7 +111,7 @@ export interface CborMethods {
   // Throwing conversion (throws on mismatch)
   toByteString(): Uint8Array;
   toText(): string;
-  toArray(): Cbor[];
+  toArray(): readonly Cbor[];
   toMap(): CborMap;
   toTagged(): [Tag, Cbor];
   toBool(): boolean;
@@ -146,22 +146,22 @@ export interface TaggedCborEncodable {
 /**
  * Type guard to check if value has taggedCbor method.
  */
-function hasTaggedCbor(value: unknown): value is TaggedCborEncodable {
+const hasTaggedCbor = (value: unknown): value is TaggedCborEncodable => {
   return typeof value === 'object' && value !== null && 'taggedCbor' in value && typeof (value as TaggedCborEncodable).taggedCbor === 'function';
-}
+};
 
 /**
  * Type guard to check if value has toCbor method.
  */
-function hasToCbor(value: unknown): value is ToCbor {
+const hasToCbor = (value: unknown): value is ToCbor => {
   return typeof value === 'object' && value !== null && 'toCbor' in value && typeof (value as ToCbor).toCbor === 'function';
-}
+};
 
 /**
  * Convert any value to a CBOR representation.
  * Matches Rust's `From` trait implementations for CBOR.
  */
-export function cbor(value: CborEncodable): Cbor {
+export const cbor = (value: CborEncodable): Cbor => {
   // If already CBOR and has methods, return as-is
   if (isCbor(value) && 'toData' in value) {
     return value;
@@ -244,17 +244,17 @@ export function cbor(value: CborEncodable): Cbor {
   }
 
   return attachMethods(result) as Cbor;
-}
+};
 
-export function cborHex(value: CborEncodable): string {
+export const cborHex = (value: CborEncodable): string => {
   return bytesToHex(cborData(value));
-}
+};
 
 /**
  * Encode a CBOR value to binary data.
  * Matches Rust's `CBOR::to_cbor_data()` method.
  */
-export function cborData(value: CborEncodable): Uint8Array {
+export const cborData = (value: CborEncodable): Uint8Array => {
   const c = cbor(value);
   switch (c.type) {
     case MajorType.Unsigned: {
@@ -306,13 +306,13 @@ export function cborData(value: CborEncodable): Uint8Array {
   }
   }
   throw new Error("Invalid CBOR");
-}
+};
 
-export function encodeCbor(value: CborEncodable): Uint8Array {
+export const encodeCbor = (value: CborEncodable): Uint8Array => {
   return cborData(cbor(value));
-}
+};
 
-export function taggedCbor(tag: unknown, value: CborEncodable): Cbor {
+export const taggedCbor = (tag: unknown, value: CborEncodable): Cbor => {
   // Validate and convert tag to CborNumber
   const tagNumber: CborNumber = typeof tag === 'number' || typeof tag === 'bigint' ? tag : Number(tag);
   return attachMethods({
@@ -321,22 +321,22 @@ export function taggedCbor(tag: unknown, value: CborEncodable): Cbor {
     tag: tagNumber,
     value: cbor(value),
   });
-}
+};
 
 // ============================================================================
 // Static Factory Functions
 // (Keep only essential creation functions)
 // ============================================================================
 
-export function toByteString(data: Uint8Array): Cbor {
+export const toByteString = (data: Uint8Array): Cbor => {
   return cbor(data);
-}
+};
 
-export function toByteStringFromHex(hex: string): Cbor {
+export const toByteStringFromHex = (hex: string): Cbor => {
   return toByteString(hexToBytes(hex));
-}
+};
 
-export function toTaggedValue(tag: CborNumber | Tag, item: CborEncodable): Cbor {
+export const toTaggedValue = (tag: CborNumber | Tag, item: CborEncodable): Cbor => {
   const tagValue = typeof tag === 'object' && 'value' in tag ? tag.value : tag;
   return attachMethods({
     isCbor: true,
@@ -344,23 +344,23 @@ export function toTaggedValue(tag: CborNumber | Tag, item: CborEncodable): Cbor 
     tag: tagValue,
     value: cbor(item)
   });
-}
+};
 
-export function cborFalse(): Cbor {
+export const cborFalse = (): Cbor => {
   return attachMethods({ isCbor: true, type: MajorType.Simple, value: { type: 'False' } });
-}
+};
 
-export function cborTrue(): Cbor {
+export const cborTrue = (): Cbor => {
   return attachMethods({ isCbor: true, type: MajorType.Simple, value: { type: 'True' } });
-}
+};
 
-export function cborNull(): Cbor {
+export const cborNull = (): Cbor => {
   return attachMethods({ isCbor: true, type: MajorType.Simple, value: { type: 'Null' } });
-}
+};
 
-export function cborNaN(): Cbor {
+export const cborNaN = (): Cbor => {
   return attachMethods({ isCbor: true, type: MajorType.Simple, value: { type: 'Float', value: NaN } });
-}
+};
 
 // ============================================================================
 // Method Attachment System
@@ -371,7 +371,7 @@ export function cborNaN(): Cbor {
  * This enables method chaining like cbor.toHex() instead of Cbor.toHex(cbor).
  * @internal
  */
-export function attachMethods<T extends Omit<Cbor, keyof CborMethods>>(obj: T): T & CborMethods {
+export const attachMethods = <T extends Omit<Cbor, keyof CborMethods>>(obj: T): T & CborMethods => {
   return Object.assign(obj, {
     // Universal encoding/formatting
     toData(this: Cbor): Uint8Array {
@@ -467,7 +467,7 @@ export function attachMethods<T extends Omit<Cbor, keyof CborMethods>>(obj: T): 
     asText(this: Cbor): string | undefined {
       return this.type === MajorType.Text ? this.value : undefined;
     },
-    asArray(this: Cbor): Cbor[] | undefined {
+    asArray(this: Cbor): readonly Cbor[] | undefined {
       return this.type === MajorType.Array ? this.value : undefined;
     },
     asMap(this: Cbor): CborMap | undefined {
@@ -529,7 +529,7 @@ export function attachMethods<T extends Omit<Cbor, keyof CborMethods>>(obj: T): 
       }
       return this.value;
     },
-    toArray(this: Cbor): Cbor[] {
+    toArray(this: Cbor): readonly Cbor[] {
       if (this.type !== MajorType.Array) {
         throw new TypeError(`Cannot convert CBOR to Array: expected Array type, got ${MajorType[this.type]}`);
       }
@@ -614,7 +614,7 @@ export function attachMethods<T extends Omit<Cbor, keyof CborMethods>>(obj: T): 
       return this.value;
     },
   });
-}
+};
 
 // ============================================================================
 // Cbor Namespace - Static Constants and Factory Methods

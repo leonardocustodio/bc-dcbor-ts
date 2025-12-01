@@ -57,7 +57,7 @@ export type EdgeTypeVariant =
  * edgeLabel({ type: EdgeType.None }); // Returns undefined
  * ```
  */
-export function edgeLabel(edge: EdgeTypeVariant): string | undefined {
+export const edgeLabel = (edge: EdgeTypeVariant): string | undefined => {
   switch (edge.type) {
     case EdgeType.ArrayElement:
       return `arr[${edge.index}]`;
@@ -72,7 +72,7 @@ export function edgeLabel(edge: EdgeTypeVariant): string | undefined {
     case EdgeType.None:
       return undefined;
   }
-}
+};
 
 /**
  * Element visited during tree traversal.
@@ -98,9 +98,9 @@ export type WalkElement =
  * const cbor = asSingle(element); // Returns someCbor
  * ```
  */
-export function asSingle(element: WalkElement): Cbor | undefined {
+export const asSingle = (element: WalkElement): Cbor | undefined => {
   return element.type === 'single' ? element.cbor : undefined;
-}
+};
 
 /**
  * Returns the key-value pair if this is a 'keyvalue' variant.
@@ -114,9 +114,9 @@ export function asSingle(element: WalkElement): Cbor | undefined {
  * const pair = asKeyValue(element); // Returns [keyValue, valValue]
  * ```
  */
-export function asKeyValue(element: WalkElement): [Cbor, Cbor] | undefined {
+export const asKeyValue = (element: WalkElement): [Cbor, Cbor] | undefined => {
   return element.type === 'keyvalue' ? [element.key, element.value] : undefined;
-}
+};
 
 /**
  * Visitor function type with state threading.
@@ -186,11 +186,11 @@ export type Visitor<State> = (
  * });
  * ```
  */
-export function walk<State>(
+export const walk = <State>(
   cbor: Cbor,
   initialState: State,
   visitor: Visitor<State>
-): State {
+): State => {
   return walkInternal(
     cbor,
     0,
@@ -198,7 +198,7 @@ export function walk<State>(
     initialState,
     visitor
   );
-}
+};
 
 /**
  * Internal recursive walk implementation.
@@ -371,7 +371,7 @@ function walkTagged<State>(
  * console.log(count); // 6 (array, 1, 2, inner array, 3, 4)
  * ```
  */
-export function countElements(cbor: Cbor): number {
+export const countElements = (cbor: Cbor): number => {
   interface CountState {
     count: number;
   }
@@ -385,7 +385,7 @@ export function countElements(cbor: Cbor): number {
   );
 
   return result.count;
-}
+};
 
 /**
  * Helper: Collect all elements at a specific depth level.
@@ -403,7 +403,7 @@ export function countElements(cbor: Cbor): number {
  * // Returns: [1, 2, 3, 4]
  * ```
  */
-export function collectAtLevel(cbor: Cbor, targetLevel: number): Cbor[] {
+export const collectAtLevel = (cbor: Cbor, targetLevel: number): Cbor[] => {
   interface CollectState {
     items: Cbor[];
   }
@@ -423,7 +423,7 @@ export function collectAtLevel(cbor: Cbor, targetLevel: number): Cbor[] {
   );
 
   return result.items;
-}
+};
 
 /**
  * Helper: Find first element matching a predicate.
@@ -450,10 +450,10 @@ export function collectAtLevel(cbor: Cbor, targetLevel: number): Cbor[] {
  * });
  * ```
  */
-export function findFirst(
+export const findFirst = (
   cbor: Cbor,
   predicate: (element: WalkElement) => boolean
-): Cbor | undefined {
+): Cbor | undefined => {
   interface FindState {
     found?: Cbor;
   }
@@ -477,7 +477,7 @@ export function findFirst(
   );
 
   return result.found;
-}
+};
 
 /**
  * Helper: Collect all text strings in a CBOR tree.
@@ -497,7 +497,7 @@ export function findFirst(
  * // Returns: ['Document', 'urgent', 'draft', 'Alice']
  * ```
  */
-export function collectAllText(cbor: Cbor): string[] {
+export const collectAllText = (cbor: Cbor): string[] => {
   interface TextState {
     texts: string[];
   }
@@ -517,7 +517,7 @@ export function collectAllText(cbor: Cbor): string[] {
   );
 
   return result.texts;
-}
+};
 
 /**
  * Helper: Get the maximum depth of a CBOR tree.
@@ -534,7 +534,7 @@ export function collectAllText(cbor: Cbor): string[] {
  * console.log(maxDepth(nested)); // 3
  * ```
  */
-export function maxDepth(cbor: Cbor): number {
+export const maxDepth = (cbor: Cbor): number => {
   interface DepthState {
     maxDepth: number;
   }
@@ -549,4 +549,4 @@ export function maxDepth(cbor: Cbor): number {
   );
 
   return result.maxDepth;
-}
+};

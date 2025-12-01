@@ -258,10 +258,10 @@ let globalTagsStore: TagsStore | undefined;
  * store.insert(createTag(999, 'myTag'));
  * ```
  */
-export function getGlobalTagsStore(): TagsStore {
+export const getGlobalTagsStore = (): TagsStore => {
   globalTagsStore ??= new TagsStore();
   return globalTagsStore;
-}
+};
 
 /**
  * Execute a function with access to the global tags store.
@@ -276,9 +276,9 @@ export function getGlobalTagsStore(): TagsStore {
  * console.log(tagName); // 'date'
  * ```
  */
-export function withTags<T>(action: (tags: TagsStore) => T): T {
+export const withTags = <T>(action: (tags: TagsStore) => T): T => {
   return action(getGlobalTagsStore());
-}
+};
 
 /**
  * Execute a function with mutable access to the global tags store.
@@ -289,6 +289,6 @@ export function withTags<T>(action: (tags: TagsStore) => T): T {
  * @param action - Function to execute with the tags store
  * @returns Result of the action function
  */
-export function withTagsMut<T>(action: (tags: TagsStore) => T): T {
+export const withTagsMut = <T>(action: (tags: TagsStore) => T): T => {
   return action(getGlobalTagsStore());
-}
+};

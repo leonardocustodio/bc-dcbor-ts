@@ -23,14 +23,14 @@ export type Error =
    * item could be decoded. This typically happens when a CBOR item's
    * structure indicates more data than is actually present.
    */
-  | { type: 'Underrun' }
+  | { readonly type: 'Underrun' }
   /**
    * An unsupported or invalid value was encountered in a CBOR header byte.
    * The parameter contains the unsupported header byte value.
    * This can occur when decoding CBOR that uses unsupported features or is
    * malformed.
    */
-  | { type: 'UnsupportedHeaderValue'; value: number }
+  | { readonly type: 'UnsupportedHeaderValue'; readonly value: number }
   /**
    * A CBOR numeric value was encoded in a non-canonical form, violating the
    * deterministic encoding requirement of dCBOR (per Section 2.3 of the
@@ -42,7 +42,7 @@ export type Error =
    *   reduced
    * - A NaN value was not encoded in its canonical form (`f97e00`)
    */
-  | { type: 'NonCanonicalNumeric' }
+  | { readonly type: 'NonCanonicalNumeric' }
   /**
    * An invalid CBOR simple value was encountered during decoding.
    *
@@ -50,14 +50,14 @@ export type Error =
    * `null`, and floating point values are valid simple values in dCBOR.
    * All other major type 7 values are invalid.
    */
-  | { type: 'InvalidSimpleValue' }
+  | { readonly type: 'InvalidSimpleValue' }
   /**
    * A CBOR text string was not valid UTF-8. The parameter contains the
    * specific error message.
    *
    * All CBOR text strings (major type 3) must be valid UTF-8 per RFC 8949.
    */
-  | { type: 'InvalidString'; message: string }
+  | { readonly type: 'InvalidString'; readonly message: string }
   /**
    * A CBOR text string was not encoded in Unicode Canonical Normalization
    * Form C (NFC).
@@ -66,7 +66,7 @@ export type Error =
    * NFC form, and decoders must reject any encoded text strings that are
    * not in NFC.
    */
-  | { type: 'NonCanonicalString' }
+  | { readonly type: 'NonCanonicalString' }
   /**
    * The decoded CBOR item didn't consume all input data.
    * The parameter contains the number of unused bytes.
@@ -74,7 +74,7 @@ export type Error =
    * This error occurs when decoding functions expect exactly one CBOR item
    * but the input contains additional data after a valid CBOR item.
    */
-  | { type: 'UnusedData'; count: number }
+  | { readonly type: 'UnusedData'; readonly count: number }
   /**
    * The keys in a decoded CBOR map were not in the canonical lexicographic order
    * of their encoding.
@@ -83,7 +83,7 @@ export type Error =
    * ascending lexicographic order of their encoded representation for
    * deterministic encoding.
    */
-  | { type: 'MisorderedMapKey' }
+  | { readonly type: 'MisorderedMapKey' }
   /**
    * A decoded CBOR map contains duplicate keys, which is invalid.
    *
@@ -91,11 +91,11 @@ export type Error =
    * duplicate keys, and decoders must reject encoded maps with duplicate
    * keys.
    */
-  | { type: 'DuplicateMapKey' }
+  | { readonly type: 'DuplicateMapKey' }
   /**
    * A requested key was not found in a CBOR map during data extraction.
    */
-  | { type: 'MissingMapKey' }
+  | { readonly type: 'MissingMapKey' }
   /**
    * A CBOR numeric value could not be represented in the specified target
    * numeric type.
@@ -104,7 +104,7 @@ export type Error =
    * type that is too small to represent the value without loss of
    * precision.
    */
-  | { type: 'OutOfRange' }
+  | { readonly type: 'OutOfRange' }
   /**
    * The CBOR value is not of the expected type for a conversion or
    * operation.
@@ -113,40 +113,41 @@ export type Error =
    * doesn't match the actual CBOR item's type (e.g., trying to convert a
    * string to an integer).
    */
-  | { type: 'WrongType' }
+  | { readonly type: 'WrongType' }
   /**
    * The CBOR tagged value had a different tag than expected.
    * Contains the expected tag and the actual tag found.
    */
-  | { type: 'WrongTag'; expected: Tag; actual: Tag }
+  | { readonly type: 'WrongTag'; readonly expected: Tag; readonly actual: Tag }
   /**
    * Invalid UTF‑8 in a text string.
    */
-  | { type: 'InvalidUtf8'; message: string }
+  | { readonly type: 'InvalidUtf8'; readonly message: string }
   /**
    * Invalid ISO 8601 date format.
    */
-  | { type: 'InvalidDate'; message: string }
+  | { readonly type: 'InvalidDate'; readonly message: string }
   /**
    * Custom error message.
    */
-  | { type: 'Custom'; message: string };
+  | { readonly type: 'Custom'; readonly message: string };
 
 /**
  * Create a custom error with a message.
  *
  * Matches Rust's `Error::msg()` method.
  */
-export function errorMsg(message: string): Error {
-  return { type: 'Custom', message };
-}
+export const errorMsg = (message: string): Error => ({
+  type: 'Custom',
+  message
+});
 
 /**
  * Convert an Error to a display string.
  *
  * Matches Rust's `Display` trait / `to_string()` method.
  */
-export function errorToString(error: Error): string {
+export const errorToString = (error: Error): string => {
   switch (error.type) {
     case 'Underrun':
       return 'early end of CBOR data';
@@ -181,7 +182,7 @@ export function errorToString(error: Error): string {
     case 'Custom':
       return error.message;
   }
-}
+};
 
 /**
  * Result type matching Rust's `Result<T, Error>`.
@@ -196,16 +197,18 @@ export type Result<T> =
 /**
  * Create a successful Result.
  */
-export function Ok<T>(value: T): Result<T> {
-  return { ok: true, value };
-}
+export const Ok = <T>(value: T): Result<T> => ({
+  ok: true,
+  value
+});
 
 /**
  * Create a failed Result.
  */
-export function Err<T>(error: Error): Result<T> {
-  return { ok: false, error };
-}
+export const Err = <T>(error: Error): Result<T> => ({
+  ok: false,
+  error
+});
 
 /**
  * Typed error class for all CBOR-related errors.

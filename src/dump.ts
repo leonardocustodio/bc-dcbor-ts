@@ -29,23 +29,23 @@ export interface HexFormatOpts {
 /**
  * Convert bytes to hex string.
  */
-export function bytesToHex(bytes: Uint8Array): string {
+export const bytesToHex = (bytes: Uint8Array): string => {
   return Array.from(bytes)
     .map(b => b.toString(16).padStart(2, '0'))
     .join('');
-}
+};
 
 /**
  * Convert hex string to bytes.
  */
-export function hexToBytes(hexString: string): Uint8Array {
+export const hexToBytes = (hexString: string): Uint8Array => {
   const hex = hexString.replace(/\s/g, '');
   const bytes = new Uint8Array(hex.length / 2);
   for (let i = 0; i < hex.length; i += 2) {
     bytes[i / 2] = parseInt(hex.slice(i, i + 2), 16);
   }
   return bytes;
-}
+};
 
 /**
  * Returns the encoded hexadecimal representation of CBOR.
@@ -53,9 +53,7 @@ export function hexToBytes(hexString: string): Uint8Array {
  * @param cbor - CBOR value to convert
  * @returns Hex string
  */
-export function hex(cbor: Cbor): string {
-  return bytesToHex(cborData(cbor));
-}
+export const hex = (cbor: Cbor): string => bytesToHex(cborData(cbor));
 
 /**
  * Returns the encoded hexadecimal representation of CBOR with options.
@@ -68,7 +66,7 @@ export function hex(cbor: Cbor): string {
  * @param opts - Formatting options
  * @returns Hex string (possibly annotated)
  */
-export function hexOpt(cbor: Cbor, opts: HexFormatOpts = {}): string {
+export const hexOpt = (cbor: Cbor, opts: HexFormatOpts = {}): string => {
   if (opts.annotate !== true) {
     return hex(cbor);
   }
@@ -83,7 +81,7 @@ export function hexOpt(cbor: Cbor, opts: HexFormatOpts = {}): string {
 
   const lines = items.map(item => item.format(roundedNoteColumn));
   return lines.join('\n');
-}
+};
 
 /**
  * Returns the encoded hexadecimal representation of CBOR, with annotations.
@@ -92,11 +90,11 @@ export function hexOpt(cbor: Cbor, opts: HexFormatOpts = {}): string {
  * @param tagsStore - Optional tags store for tag name resolution
  * @returns Annotated hex string
  */
-export function hexAnnotated(cbor: Cbor, tagsStore?: TagsStore): string {
+export const hexAnnotated = (cbor: Cbor, tagsStore?: TagsStore): string => {
   // Use global tags store if not provided
   tagsStore ??= getGlobalTagsStore();
   return hexOpt(cbor, { annotate: true, tagsStore });
-}
+};
 
 /**
  * Internal structure for dump items.
