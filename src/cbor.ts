@@ -311,7 +311,7 @@ export const cbor = (value: CborInput): Cbor => {
     }
     result = { isCbor: true, type: MajorType.Map, value: map };
   } else {
-    throw new Error("Not supported");
+    throw new CborError({ type: 'Custom', message: 'Unsupported type for CBOR encoding' });
   }
 
   return attachMethods(result) as Cbor;
@@ -376,7 +376,7 @@ export const cborData = (value: CborInput): Uint8Array => {
     return new Uint8Array([...lengthBytes, ...flatArrayBytes]);
   }
   }
-  throw new Error("Invalid CBOR");
+  throw new CborError({ type: 'WrongType' });
 };
 
 export const encodeCbor = (value: CborInput): Uint8Array => {
