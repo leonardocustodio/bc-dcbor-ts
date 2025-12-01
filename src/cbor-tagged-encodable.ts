@@ -1,7 +1,7 @@
 /**
  * Tagged CBOR encoding support.
  *
- * This module provides the `CBORTaggedEncodable` interface, which enables types to
+ * This module provides the `CborTaggedEncodable` interface, which enables types to
  * be encoded as tagged CBOR values.
  *
  * CBOR tags provide semantic information about the encoded data. For example,
@@ -16,20 +16,20 @@
  */
 
 import { type Cbor, MajorType, attachMethods } from './cbor';
-import type { CBORTagged } from './cbor-tagged';
+import type { CborTagged } from './cbor-tagged';
 import { CborError } from './error';
 
 /**
  * Interface for types that can be encoded to CBOR with a specific tag.
  *
- * This interface extends `CBORTagged` to provide methods for encoding a value
+ * This interface extends `CborTagged` to provide methods for encoding a value
  * with its associated tag. Types that implement this interface define how they
  * should be represented in CBOR format, both with and without their tag.
  *
  * @example
  * ```typescript
  * // Define a Date type
- * class Date implements CBORTaggedEncodable {
+ * class Date implements CborTaggedEncodable {
  *   constructor(private timestamp: number) {}
  *
  *   cborTags(): Tag[] {
@@ -69,7 +69,7 @@ import { CborError } from './error';
  * const data = date.taggedCborData();
  * ```
  */
-export interface CBORTaggedEncodable extends CBORTagged {
+export interface CborTaggedEncodable extends CborTagged {
   /**
    * Returns the untagged CBOR encoding of this instance.
    *
@@ -114,10 +114,10 @@ export interface CBORTaggedEncodable extends CBORTagged {
  *
  * Uses the first tag from cborTags().
  *
- * @param encodable - Object implementing CBORTaggedEncodable
+ * @param encodable - Object implementing CborTaggedEncodable
  * @returns Tagged CBOR value
  */
-export const createTaggedCbor = (encodable: CBORTaggedEncodable): Cbor => {
+export const createTaggedCbor = (encodable: CborTaggedEncodable): Cbor => {
   const tags = encodable.cborTags();
   if (tags.length === 0) {
     throw new CborError({ type: 'Custom', message: 'No tags defined for this type' });

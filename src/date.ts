@@ -20,9 +20,9 @@ import { cbor } from './cbor';
 import { createTag, type Tag } from './tag';
 import { TAG_EPOCH_DATE_TIME } from './tags';
 import {
-  type CBORTaggedEncodable,
-  type CBORTaggedDecodable,
-  type CBORTagged,
+  type CborTaggedEncodable,
+  type CborTaggedDecodable,
+  type CborTagged,
   createTaggedCbor,
   validateTag,
   extractTaggedContent
@@ -45,8 +45,8 @@ import { CborError } from './error';
  *
  * - Supports UTC dates with optional fractional seconds
  * - Provides convenient constructors for common date creation patterns
- * - Implements the `CBORTagged`, `CBORTaggedEncodable`, and
- *   `CBORTaggedDecodable` interfaces
+ * - Implements the `CborTagged`, `CborTaggedEncodable`, and
+ *   `CborTaggedDecodable` interfaces
  * - Supports arithmetic operations with durations and between dates
  *
  * @example
@@ -66,7 +66,7 @@ import { CborError } from './error';
  * const decoded = CborDate.fromTaggedCbor(cborValue);
  * ```
  */
-export class CborDate implements CBORTagged, CBORTaggedEncodable, CBORTaggedDecodable<CborDate> {
+export class CborDate implements CborTagged, CborTaggedEncodable, CborTaggedDecodable<CborDate> {
   #datetime: Date;
 
   /**
@@ -341,7 +341,7 @@ export class CborDate implements CBORTagged, CBORTaggedEncodable, CBORTaggedDeco
   }
 
   /**
-   * Implementation of the `CBORTagged` interface for `CborDate`.
+   * Implementation of the `CborTagged` interface for `CborDate`.
    *
    * This implementation specifies that `CborDate` values are tagged with CBOR tag 1,
    * which is the standard CBOR tag for date/time values represented as seconds
@@ -354,7 +354,7 @@ export class CborDate implements CBORTagged, CBORTaggedEncodable, CBORTaggedDeco
   }
 
   /**
-   * Implementation of the `CBORTaggedEncodable` interface for `CborDate`.
+   * Implementation of the `CborTaggedEncodable` interface for `CborDate`.
    *
    * Converts this `CborDate` to an untagged CBOR value.
    *
@@ -379,7 +379,7 @@ export class CborDate implements CBORTagged, CBORTaggedEncodable, CBORTaggedDeco
   }
 
   /**
-   * Implementation of the `CBORTaggedDecodable` interface for `CborDate`.
+   * Implementation of the `CborTaggedDecodable` interface for `CborDate`.
    *
    * Creates a `CborDate` from an untagged CBOR value.
    *

@@ -1,7 +1,7 @@
 /**
  * Tagged CBOR decoding support.
  *
- * This module provides the `CBORTaggedDecodable` interface, which enables types to
+ * This module provides the `CborTaggedDecodable` interface, which enables types to
  * be decoded from tagged CBOR values.
  *
  * Tagged CBOR values include semantic information about how to interpret the
@@ -12,14 +12,14 @@
  */
 
 import { type Cbor, MajorType } from './cbor';
-import type { CBORTagged } from './cbor-tagged';
+import type { CborTagged } from './cbor-tagged';
 import type { Tag } from './tag';
 import { CborError } from './error';
 
 /**
  * Interface for types that can be decoded from CBOR with a specific tag.
  *
- * This interface extends `CBORTagged` to provide methods for
+ * This interface extends `CborTagged` to provide methods for
  * decoding tagged CBOR data into TypeScript types. It handles verification that
  * the CBOR data has the expected tag(s) and provides utilities for both
  * tagged and untagged decoding.
@@ -27,7 +27,7 @@ import { CborError } from './error';
  * @example
  * ```typescript
  * // Define a Date type
- * class Date implements CBORTaggedDecodable<Date> {
+ * class Date implements CborTaggedDecodable<Date> {
  *   constructor(public timestamp: number) {}
  *
  *   cborTags(): Tag[] {
@@ -81,7 +81,7 @@ import { CborError } from './error';
  * assert(date.timestamp === 1609459200);
  * ```
  */
-export interface CBORTaggedDecodable<T> extends CBORTagged {
+export interface CborTaggedDecodable<T> extends CborTagged {
   /**
    * Creates an instance of this type by decoding it from untagged CBOR.
    *

@@ -39,7 +39,7 @@
 
 import {
   cbor,
-  CborEncodable,
+  CborInput,
   CborMap,
   WalkElement,
   toTaggedValue
@@ -56,7 +56,7 @@ function formatElement(element: WalkElement): string {
 }
 
 // Helper function to count total visits
-function countVisits(cborValue: CborEncodable): number {
+function countVisits(cborValue: CborInput): number {
   let count = 0;
   const visitor = (
     _element: WalkElement,

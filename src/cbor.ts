@@ -52,7 +52,7 @@ export type CborNumber = number | bigint;
  * Type for values that can be converted to CBOR.
  * Matches Rust's From<T> trait implementations for CBOR.
  */
-export type CborEncodable =
+export type CborInput =
   | Cbor
   | CborNumber
   | string
@@ -63,7 +63,7 @@ export type CborEncodable =
   | ByteString
   | CborDate
   | CborMap
-  | CborEncodable[]
+  | CborInput[]
   | Map<unknown, unknown>
   | Set<unknown>
   | Record<string, unknown>;
@@ -232,7 +232,7 @@ const hasToCbor = (value: unknown): value is ToCbor => {
  * Convert any value to a CBOR representation.
  * Matches Rust's `From` trait implementations for CBOR.
  */
-export const cbor = (value: CborEncodable): Cbor => {
+export const cbor = (value: CborInput): Cbor => {
   // If already CBOR and has methods, return as-is
   if (isCbor(value) && 'toData' in value) {
     return value;
@@ -285,7 +285,7 @@ export const cbor = (value: CborEncodable): Cbor => {
   } else if (value instanceof Map) {
     result = { isCbor: true, type: MajorType.Map, value: new CborMap(value) };
   } else if (value instanceof Set) {
-    result = { isCbor: true, type: MajorType.Array, value: Array.from(value).map(v => cbor(v as CborEncodable)) };
+    result = { isCbor: true, type: MajorType.Array, value: Array.from(value).map(v => cbor(v as CborInput)) };
   } else if (hasTaggedCbor(value)) {
     return value.taggedCbor();
   } else if (hasToCbor(value)) {
@@ -295,19 +295,19 @@ export const cbor = (value: CborEncodable): Cbor => {
     const keys = Object.keys(value);
     const objValue = value as { tag: unknown; value: unknown; [key: string]: unknown };
     if (keys.length === 2 && keys.includes('tag') && keys.includes('value')) {
-      return taggedCbor(objValue.tag, objValue.value as CborEncodable);
+      return taggedCbor(objValue.tag, objValue.value as CborInput);
     }
     // Not a tagged value, fall through to map handling
     const map = new CborMap();
     for (const [key, val] of Object.entries(value)) {
-      map.set(cbor(key as CborEncodable), cbor(val as CborEncodable));
+      map.set(cbor(key as CborInput), cbor(val as CborInput));
     }
     result = { isCbor: true, type: MajorType.Map, value: map };
   } else if (typeof value === 'object' && value !== null) {
     // Handle plain objects by converting to CborMap
     const map = new CborMap();
     for (const [key, val] of Object.entries(value)) {
-      map.set(cbor(key as CborEncodable), cbor(val as CborEncodable));
+      map.set(cbor(key as CborInput), cbor(val as CborInput));
     }
     result = { isCbor: true, type: MajorType.Map, value: map };
   } else {
@@ -317,7 +317,7 @@ export const cbor = (value: CborEncodable): Cbor => {
   return attachMethods(result) as Cbor;
 };
 
-export const cborHex = (value: CborEncodable): string => {
+export const cborHex = (value: CborInput): string => {
   return bytesToHex(cborData(value));
 };
 
@@ -325,7 +325,7 @@ export const cborHex = (value: CborEncodable): string => {
  * Encode a CBOR value to binary data.
  * Matches Rust's `CBOR::to_cbor_data()` method.
  */
-export const cborData = (value: CborEncodable): Uint8Array => {
+export const cborData = (value: CborInput): Uint8Array => {
   const c = cbor(value);
   switch (c.type) {
     case MajorType.Unsigned: {
@@ -379,11 +379,11 @@ export const cborData = (value: CborEncodable): Uint8Array => {
   throw new Error("Invalid CBOR");
 };
 
-export const encodeCbor = (value: CborEncodable): Uint8Array => {
+export const encodeCbor = (value: CborInput): Uint8Array => {
   return cborData(cbor(value));
 };
 
-export const taggedCbor = (tag: unknown, value: CborEncodable): Cbor => {
+export const taggedCbor = (tag: unknown, value: CborInput): Cbor => {
   // Validate and convert tag to CborNumber
   const tagNumber: CborNumber = typeof tag === 'number' || typeof tag === 'bigint' ? tag : Number(tag);
   return attachMethods({
@@ -407,7 +407,7 @@ export const toByteStringFromHex = (hex: string): Cbor => {
   return toByteString(hexToBytes(hex));
 };
 
-export const toTaggedValue = (tag: CborNumber | Tag, item: CborEncodable): Cbor => {
+export const toTaggedValue = (tag: CborNumber | Tag, item: CborInput): Cbor => {
   const tagValue = typeof tag === 'object' && 'value' in tag ? tag.value : tag;
   return attachMethods({
     isCbor: true,
@@ -717,7 +717,7 @@ export const Cbor = {
    * @param value - Any JavaScript value (number, string, boolean, null, array, object, etc.)
    * @returns A CBOR symbolic representation with instance methods
    */
-  from(value: CborEncodable): Cbor {
+  from(value: CborInput): Cbor {
     return cbor(value);
   },
 

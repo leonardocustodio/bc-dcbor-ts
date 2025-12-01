@@ -9,7 +9,7 @@
 // Core CBOR types and encoding/decoding
 export {
   Cbor,
-  type CborEncodable,
+  type CborInput,
   MajorType,
   type CborUnsignedType,
   type CborNegativeType,
@@ -47,10 +47,10 @@ export { CborSet } from './set';
 // Tags and Tagged values
 export { type Tag } from './tag';
 export {
-  type CBORTagged,
-  type CBORTaggedEncodable,
-  type CBORTaggedDecodable,
-  type CBORTaggedCodable,
+  type CborTagged,
+  type CborTaggedEncodable,
+  type CborTaggedDecodable,
+  type CborTaggedCodable,
   createTaggedCbor
 } from './cbor-tagged';
 export { TagsStore, type TagsStoreTrait } from './tags-store';
@@ -94,9 +94,9 @@ export {
 
 // Codable interfaces
 export {
-  type CBORCodable,
-  type CBOREncodable,
-  type CBORDecodable
+  type CborCodable,
+  type CborEncodable,
+  type CborDecodable
 } from './cbor-codable';
 
 // Error types (matches Rust's Error enum)

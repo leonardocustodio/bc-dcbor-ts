@@ -11,7 +11,7 @@ import {
   type Cbor,
   MajorType,
   type CborNumber,
-  type CborEncodable,
+  type CborInput,
   type CborUnsignedType,
   type CborNegativeType,
   type CborByteStringType,
@@ -594,7 +594,7 @@ export const arrayIsEmpty = (cbor: Cbor): boolean | undefined => {
  * @param key - Map key
  * @returns Value for key or undefined
  */
-export function mapValue<K extends CborEncodable, V>(cbor: Cbor, key: K): V | undefined {
+export function mapValue<K extends CborInput, V>(cbor: Cbor, key: K): V | undefined {
   if (cbor.type !== MajorType.Map) {
     return undefined;
   }
@@ -608,7 +608,7 @@ export function mapValue<K extends CborEncodable, V>(cbor: Cbor, key: K): V | un
  * @param key - Map key
  * @returns True if key exists, false otherwise, undefined if not map
  */
-export function mapHas<K extends CborEncodable>(cbor: Cbor, key: K): boolean | undefined {
+export function mapHas<K extends CborInput>(cbor: Cbor, key: K): boolean | undefined {
   if (cbor.type !== MajorType.Map) {
     return undefined;
   }
